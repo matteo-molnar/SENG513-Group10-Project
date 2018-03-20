@@ -1,0 +1,23 @@
+{
+  "name": "seng513-group10-project",
+  "version": "1.0.0",
+  "description": "Project for Group 10, SENG 513",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matteo-molnar/SENG513-Group10-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matteo-molnar/SENG513-Group10-Project/issues"
+  },
+  "homepage": "https://github.com/matteo-molnar/SENG513-Group10-Project#readme",
+  "dependencies": {
+    "socket.io": "^2.0.4",
+    "mongodb": "^2.2.33"
+  }
+}
