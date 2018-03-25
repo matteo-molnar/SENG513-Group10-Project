@@ -1,5 +1,5 @@
 const mongo = require('mongodb').MongoClient;  // https://github.com/mongodb/node-mongodb-native
-const client = require('socket.io').listen(4000).sockets;  // https://github.com/socketio/socket.io
+const io = require('socket.io').listen(4000).sockets;  // https://github.com/socketio/socket.io
 
 // Connect to mongo
 mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
@@ -10,7 +10,7 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
     console.log('Mongodb connected...');
 
     // Connect to socket.io
-    client.on('connection', function(socket) {
+    io.on('connection', function(socket) {
         let chat = db.collection('chats');
 
         // Create function to send status
@@ -41,7 +41,7 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
             else {
                 // Insert message
                 chat.insert({name: name, message: message}, function() {
-                    client.emit('output', [data]);
+                    io.emit('output', [data]);
                     
                     // Send status object
                     sendStatus({
