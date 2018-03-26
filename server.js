@@ -1,5 +1,22 @@
 const mongo = require('mongodb').MongoClient;  // https://github.com/mongodb/node-mongodb-native
-const io = require('socket.io').listen(4000).sockets;  // https://github.com/socketio/socket.io
+//const io = require('socket.io').listen(4000).sockets;  // https://github.com/socketio/socket.io
+
+
+
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+const path = require('path');
+
+// Start the server
+const listener = server.listen(process.env.PORT || 4000);
+console.log('Server Running on port %s', listener.address().port)
+
+
+// Serve the Client
+app.use(express.static(path.join(__dirname, '/public')));
+
 
 // Connect to mongo
 mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {

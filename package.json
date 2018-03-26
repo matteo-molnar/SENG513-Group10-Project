@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/matteo-molnar/SENG513-Group10-Project#readme",
   "dependencies": {
-    "socket.io": "^2.0.4",
-    "mongodb": "^2.2.33"
+    "express": "^4.16.3",
+    "mongodb": "^2.2.33",
+    "socket.io": "^2.0.4"
   }
 }
