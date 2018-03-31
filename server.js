@@ -17,6 +17,36 @@ console.log('Server Running on port %s', listener.address().port)
 // Serve the Client
 app.use(express.static(path.join(__dirname, '/public')));
 
+// io respond on client;s connection
+io.on('connection', onConnection);
+
+
+// canvas' logic
+const Jimp = require('jimp');
+//app.get('/', function(req, res){ res.sendfile('public/b.html');});
+
+var whiteboard;
+//var file = '229.gif';
+var file = 'stock_image.jpg';
+Jimp.read(file, function(err, file) {
+    if (err) throw err;
+    file.resize(720, 480);
+    file.getBase64(Jimp.AUTO, function(err, data) {
+        if (err) throw err;
+        whiteboard = data;
+    });
+});
+
+function onConnection(socket){
+    io.to(socket.id).emit('history', whiteboard);
+
+    socket.on('drawing', function(data){
+        whiteboard = data.canvas;
+        socket.broadcast.emit('drawing', data);
+    });
+}
+
+
 
 // Connect to mongo
 mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
@@ -79,3 +109,4 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
         });
     });
 });
+

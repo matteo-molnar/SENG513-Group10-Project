@@ -2,6 +2,7 @@
 
 
 (function () {
+	
     // connect to server socket
     let socket = io();
 
