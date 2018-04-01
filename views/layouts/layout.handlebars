@@ -1,17 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/css/bootstrap.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <title>SENG533 DRAW APP</title>
+    <link rel="stylesheet" href="/css/offcanvas.css">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+    <title>SENG513 Collab App</title>
 </head>
-<body>
-    {{{body}}}
-</body>
-</html>
 
-<!-- THIS PAGE JUST DISPLAYS THE .handlebars PAGES
-FROM THE ../views FOLDER -->
+<body class="bg-light">
+    <header>
+        <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">SENG513 Collab App</a>
+            <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Channels<span class="sr-only">(current)</span></a>
+                    </li>
+                    {{#if user}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/logout">Logout</a>
+                    </li>
+                    {{else}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/register">Register</a>
+                    </li>
+                    {{/if}}
+                </ul>
+            </div>
+        </nav>
+        <!-- end navbar -->
+    </header>
+
+    <main role="main" class="container">
+        <!-- remove bootsrap classes from main to have full width -->
+        <div class="col-lg-12">
+          {{#if success_msg}}
+            <div class="alert alert-success">{{success_msg}}</div>
+          {{/if}}
+
+          {{#if error_msg}}
+            <div class="alert alert-danger">{{error_msg}}</div>
+          {{/if}}
+
+          {{#if error}}
+            <div class="alert alert-danger">{{error}}</div>
+          {{/if}}
+          
+          {{{body}}}
+        </div>
+        <!-- handlebars input here -->
+
+    </main>
+
+
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2018 SENG513 Collab App.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/offcanvas.js"></script>
+</body>
+
+</html>
