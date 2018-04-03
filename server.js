@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const expressValidator = require('express-validator');
-const session = require('express-session'); 
+const session = require('express-session');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
@@ -104,37 +104,74 @@ app.use('/users', users); // change to be single page later
 
 
 
-
-
-
-
+// canvas' logic
+const Jimp = require('jimp');
+const fs = require('fs');
+let rooms;
+initializeRooms('public/rooms/rooms.json');
 
 // io respond on client;s connection
 io.on('connection', onConnection);
 
+// Saves an object as a string into a file
+function saveToFile(object, filePath){
+    let json = JSON.stringify(object);
+    fs.writeFile(filePath, json, 'utf8', function(){
+        console.log('saved to file');
+    })
+}
 
-// canvas' logic
-const Jimp = require('jimp');
-//app.get('/', function(req, res){ res.sendfile('public/b.html');});
-
-var whiteboard;
-//var file = '229.gif';
-var file = 'stock_image.jpg';
-Jimp.read(file, function(err, file) {
-    if (err) throw err;
-    file.resize(720, 480);
-    file.getBase64(Jimp.AUTO, function(err, data) {
+// Resizes and generates a base64 encoding of an image
+function encodingFromFile(filePath, callback){
+    let file = filePath;
+    Jimp.read(file, function(err, file) {
         if (err) throw err;
-        whiteboard = data;
+        file.resize(720, 480);
+        file.getBase64(Jimp.AUTO, function(err, data) {
+            if (err) throw err;
+            callback(data);
+        });
     });
-});
+}
+
+// Loads pre-existing rooms from file into the local rooms variable
+function initializeRooms(filePath){
+    fs.readFile(filePath, function(err, data){
+        if (err) throw err;
+        try {
+            rooms = JSON.parse(data);
+        } catch (e) {
+            rooms = [];
+        }
+        console.log('Rooms loaded...');
+    });
+}
 
 function onConnection(socket){
-    io.to(socket.id).emit('history', whiteboard);
+    socket.on('makeRoom', function(data){
+        if (rooms.findIndex(room => room.id === data.name) === -1){
+            encodingFromFile(data.path, function(encoding){
+                var newRoom = {
+                    "id": data.name,
+                    "encoding": encoding
+                }
+                rooms.push(newRoom);
+                saveToFile(rooms, 'public/rooms/rooms.json');
+                console.log('rooms: '+rooms.length);
+            });
+        }
+    });
 
-    socket.on('drawing', function(data){
-        whiteboard = data.canvas;
-        socket.broadcast.emit('drawing', data);
+    socket.on('subscribe', function(data){
+        var roomName = data;
+        var index = rooms.findIndex(room => room.id === roomName);
+        socket.join(roomName);
+        console.log(socket.id + ' joined room: ' + data);
+            io.to(socket.id).emit('history', rooms[index].encoding);
+        socket.on('drawing', function(data){
+            rooms[index].encoding = data.canvas;
+            io.sockets.in(roomName).emit('drawing', data);
+        });
     });
 }
 
@@ -181,7 +218,7 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
                 // Insert message
                 chat.insert({name: name, message: message}, function() {
                     io.emit('output', [data]);
-                    
+
                     // Send status object
                     sendStatus({
                         message: 'Message sent',
@@ -201,4 +238,3 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
         });
     });
 });
-

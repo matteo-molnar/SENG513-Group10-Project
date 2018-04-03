@@ -1,22 +1,52 @@
 <!doctype html>
 <ol>
-	<li><button id = 'btn' type="button" class="btn btn-primary">Canvas Room</button></li>
-	<li><button id = 'btn2' type="button" class="btn btn-success">Canvas Room</button></li>
-	<li><button id = 'btn3' type="button" class="btn btn-warning">Canvas Room</button></li>
-	<li><button id = 'btn4' type="button" class="btn btn-danger">Canvas Room</button></li>
+	<li><button id = 'btn' type="button" class="btn btn-primary">Canvas Room 1</button><button id = 'btn-make' type="button" class="btn btn-primary">Make room 1</button></li>
+	<li><button id = 'btn2' type="button" class="btn btn-success">Canvas Room 2</button><button id = 'btn2-make' type="button" class="btn btn-success">Make room 2</button></li>
+	<li><button id = 'btn3' type="button" class="btn btn-warning">Canvas Room 3</button><button id = 'btn3-make' type="button" class="btn btn-warning">Make room 3</button></li>
+	<li><button id = 'btn4' type="button" class="btn btn-danger">Canvas Room 4</button><button id = 'btn4-make' type="button" class="btn btn-danger">Make room 4</button></li>
 </ol>
-<script>$('#btn').on('click', function(){
-	$("#includedContent").load("/rooms/canvas.html"); 
-})</script>
+<script>
+	$('#btn').on('click', function(){
+		$("#includedContent").load("/rooms/canvas.html");
+		setIntent($('#btn').text());
+	})
+	$('#btn-make').on('click', function(){
+		socket.emit('makeRoom', {
+			'name': $('#btn').text(),
+			'path': 'stock_image.jpg'
+		})
+	})	
 
-<script>$('#btn2').on('click', function(){
-	$("#includedContent").load("/rooms/canvas.html"); 
-})</script>
+	$('#btn2').on('click', function(){
+		$("#includedContent").load("/rooms/canvas.html");
+		setIntent($('#btn2').text());
+	})
+	$('#btn2-make').on('click', function(){
+		socket.emit('makeRoom', {
+			'name': $('#btn2').text(),
+			'path': 'stock_apple.png'
+		})
+	})
 
-<script>$('#btn3').on('click', function(){
-	$("#includedContent").load("/rooms/canvas.html"); 
-})</script>
+	$('#btn3').on('click', function(){
+		$("#includedContent").load("/rooms/canvas.html");
+		setIntent($('#btn3').text());
+	})
+	$('#btn3-make').on('click', function(){
+		socket.emit('makeRoom', {
+			'name': $('#btn3').text(),
+			'path': 'stock_image.jpg'
+		})
+	})
 
-<script>$('#btn4').on('click', function(){
-	$("#includedContent").load("/rooms/canvas.html"); 
-})</script>
+	$('#btn4').on('click', function(){
+		$("#includedContent").load("/rooms/canvas.html");
+		setIntent($('#btn4').text());
+	})
+	$('#btn4-make').on('click', function(){
+		socket.emit('makeRoom', {
+			'name': $('#btn4').text(),
+			'path': 'stock_apple.png'
+		})
+	})
+</script>
