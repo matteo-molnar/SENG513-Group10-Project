@@ -14,8 +14,8 @@ html, body {
  * Canvas
  */
 
-.canvascontainer {
-  overflow: scroll;
+.canvasContainer {
+  overflow: auto;
 }
 
 .whiteboard {
