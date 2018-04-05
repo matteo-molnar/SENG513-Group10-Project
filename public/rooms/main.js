@@ -13,11 +13,23 @@ function joinRoom(roomName) {
 
     // var socket = io();
     var canvas = document.getElementsByClassName('whiteboard')[0];
-    let rect = canvas.getBoundingClientRect();
     var colors = document.getElementsByClassName('color');
     var context = canvas.getContext('2d');
     canvas.width = 720;
     canvas.height = 480;
+
+    var divPos = {};
+    var offset = $('.whiteboard').offset();
+    $(document).mousemove(function(e){
+        console.log('mousemove');
+        console.log("offset" + offset.left+", "+offset.top);
+        console.log("e"+e.pageX+", "+e.pageY);
+        divPos = {
+            left: e.pageX - offset.left,
+            top: e.pageY - offset.top
+        };
+        console.log("divPos"+divPos.left+", "+divPos.top);
+    });
 
     var current = {
         color: 'black'
@@ -40,13 +52,6 @@ function joinRoom(roomName) {
 
     //Modified to draw points from top left of canvas instead of page
     function drawLine(x0, y0, x1, y1, color, emit){
-        if (emit) {
-            x0 = x0 - rect.x;
-            y0 = y0 - rect.y;
-            x1 = x1 - rect.x;
-            y1 = y1 - rect.y;
-        }
-        debug && console.log(rect);
         context.beginPath();
         context.moveTo(x0, y0);
         context.lineTo(x1, y1);
@@ -72,21 +77,21 @@ function joinRoom(roomName) {
 
     function onMouseDown(e){
         drawing = true;
-        current.x = e.clientX;
-        current.y = e.clientY;
+        current.x = divPos.left;
+        current.y = divPos.top;
     }
 
     function onMouseUp(e){
         if (!drawing) { return; }
         drawing = false;
-        drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+        drawLine(current.x, current.y, divPos.left, divPos.top, current.color, true);
     }
 
     function onMouseMove(e){
         if (!drawing) { return; }
-        drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
-        current.x = e.clientX;
-        current.y = e.clientY;
+        drawLine(current.x, current.y, divPos.left, divPos.top, current.color, true);
+        current.x = divPos.left;
+        current.y = divPos.top;
     }
 
     function onColorUpdate(e){
@@ -107,7 +112,7 @@ function joinRoom(roomName) {
     }
 
     function onDrawingEvent(data){
-        console.log('onDrawingEvent');
+        debug && console.log('onDrawingEvent');
         var w = canvas.width;
         var h = canvas.height;
         drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
@@ -115,11 +120,10 @@ function joinRoom(roomName) {
 
     // update the position relative screen corners
     function onResize() {
-        rect = canvas.getBoundingClientRect();
+        offset = $('.whiteboard').offset();
     }
 
     function swapCanvas(data){
-        console.log('debug');
         if (data) {
             decodeCanvas(data, canvas, context);
             debug && console.log(data);
@@ -135,5 +139,4 @@ function joinRoom(roomName) {
             }
         }
     }
-
 }

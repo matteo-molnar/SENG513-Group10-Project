@@ -23,8 +23,8 @@ html, body {
   left: 50%;
   top: 50%;
   margin: -240px 0 0 -360px;*/
-  margin: 48px 0 0 0;
-  border: 5px solid black;
+  margin: 0 0 0 0;
+  border: 2px solid black;
 }
 
 .colors {
