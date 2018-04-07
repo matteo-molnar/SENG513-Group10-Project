@@ -46,8 +46,42 @@ function joinRoom(roomName) {
     }
 
     socket.on('drawing', onDrawingEvent);
-    socket.on('history', swapCanvas)
-
+    socket.on('history', swapCanvas);
+	socket.on('clearCanvas',function(img){
+		context.clearRect(0,0,canvas.width,canvas.height);
+	});
+	
+	$('#clrBtn').on('click', function(){
+		context.clearRect(0,0,canvas.width,canvas.height);
+		let canvasData = canvas.toDataURL();
+		socket.emit('clrCanvas', {
+			canvas: canvasData
+		});	
+	});
+	
+	$('#dlBtn').on('click',function(e){
+		let data = context.getImageData(0, 0, canvas.width, canvas.height);
+		let compositeOperation = context.globalCompositeOperation;
+		context.globalCompositeOperation = "destination-over";
+		context.fillStyle = "white";
+		context.fillRect(0,0,canvas.width,canvas.height);
+		$('#dlBtn').attr("href",canvas.toDataURL('image/png'));
+		$('#dlBtn').attr("download",roomName + ".png");
+		
+		//clear the canvas
+		context.clearRect (0,0,canvas.width,canvas.height);
+ 
+		//restore it with original / cached ImageData
+		context.putImageData(data, 0,0);
+ 
+		//reset the globalCompositeOperation to what it was
+		context.globalCompositeOperation = compositeOperation;
+		
+		
+		console.log('hi');
+		
+	});
+	
     window.addEventListener('resize', onResize, false);
 
     //Modified to draw points from top left of canvas instead of page
