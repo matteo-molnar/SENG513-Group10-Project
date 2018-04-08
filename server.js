@@ -172,6 +172,10 @@ function onConnection(socket){
             rooms[index].encoding = data.canvas;
             io.sockets.in(roomName).emit('drawing', data);
         });
+		socket.on('clrCanvas',function(data){
+			rooms[index].encoding = data.canvas;
+			io.sockets.in(roomName).emit('clearCanvas',data.canvas);	
+		});
     });
 }
 
