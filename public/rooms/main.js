@@ -30,6 +30,14 @@ function joinRoom(roomName) {
         };
         console.log("divPos"+divPos.left+", "+divPos.top);
     });
+	
+	//prevent  scrolling on move
+	$(window).on('touchmove',function(event){
+		event.preventDefault();
+		
+	}); 
+	
+	
 
     var current = {
         color: 'black'
@@ -40,6 +48,10 @@ function joinRoom(roomName) {
     canvas.addEventListener('mouseup', onMouseUp, false);
     canvas.addEventListener('mouseout', onMouseUp, false);
     canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+	canvas.addEventListener('touchstart', onTouch, false);
+	canvas.addEventListener('touchmove', onTouchMove, false);		
+	canvas.addEventListener('touchstart', onTouchLift, false);
+	
 
     for (var i = 0; i < colors.length; i++){
         colors[i].addEventListener('click', onColorUpdate, false);
@@ -108,6 +120,38 @@ function joinRoom(roomName) {
             canvas: canvasData
         });
     }
+	
+	function onTouch(event){
+		if(event.touches.length == 1){
+			current.x = event.targetTouches[0].pageX - offset.left;
+			current.y = event.targetTouches[0].pageY - offset.top;
+			console.log("touch" + current.x + ", " + current.y);
+		}
+	}
+	
+	function onTouchMove(event){
+		if(event.touches.length >1){
+			console.log("touchMove2");
+
+		}else{
+			event.preventDefault();
+			let newX = event.targetTouches[0].pageX - offset.left;
+			let newY = event.targetTouches[0].pageY - offset.top;
+			console.log("touchCOORD" + newX + ", " + newY);
+
+			drawLine(current.x,current.y,newX,newY,current.color,true);
+			current.x = newX;
+			current.y = newY;
+		}
+	}
+	
+	function onTouchLift(event){
+		let newX = event.targetTouches[0].pageX - offset.left;
+		let newY = event.targetTouches[0].pageY - offset.top;
+		drawLine(current.x,current.y,newX,newY,current.color,true);
+		current.x = newX;
+		current.y = newY;
+	}
 
     function onMouseDown(e){
         drawing = true;
