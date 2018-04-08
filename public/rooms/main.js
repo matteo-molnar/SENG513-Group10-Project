@@ -31,18 +31,18 @@ function joinRoom(roomName) {
         console.log("divPos"+divPos.left+", "+divPos.top);
     });
 	
-	//prevent  scrolling on move
-	$(window).on('touchmove',function(event){
-		event.preventDefault();
-		
-	}); 
+	 
 	
 	
 
     var current = {
         color: 'black'
     };
+	
+	
     var drawing = false;
+	
+	
 
     canvas.addEventListener('mousedown', onMouseDown, false);
     canvas.addEventListener('mouseup', onMouseUp, false);
@@ -50,8 +50,8 @@ function joinRoom(roomName) {
     canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
 	canvas.addEventListener('touchstart', onTouch, false);
 	canvas.addEventListener('touchmove', onTouchMove, false);		
-	canvas.addEventListener('touchstart', onTouchLift, false);
-	
+	canvas.addEventListener('touchend', onTouchLift, false);
+
 
     for (var i = 0; i < colors.length; i++){
         colors[i].addEventListener('click', onColorUpdate, false);
@@ -130,6 +130,7 @@ function joinRoom(roomName) {
 	}
 	
 	function onTouchMove(event){
+		event.cancellable = true;
 		if(event.touches.length >1){
 			console.log("touchMove2");
 
@@ -137,7 +138,7 @@ function joinRoom(roomName) {
 			event.preventDefault();
 			let newX = event.targetTouches[0].pageX - offset.left;
 			let newY = event.targetTouches[0].pageY - offset.top;
-			console.log("touchCOORD" + newX + ", " + newY);
+			//console.log("touchCOORD" + newX + ", " + newY);
 
 			drawLine(current.x,current.y,newX,newY,current.color,true);
 			current.x = newX;
@@ -145,12 +146,24 @@ function joinRoom(roomName) {
 		}
 	}
 	
+	
+	
 	function onTouchLift(event){
-		let newX = event.targetTouches[0].pageX - offset.left;
-		let newY = event.targetTouches[0].pageY - offset.top;
-		drawLine(current.x,current.y,newX,newY,current.color,true);
-		current.x = newX;
-		current.y = newY;
+		if(event.touches.length == 0 ){
+			
+			let newX = event.changedTouches[0].pageX - offset.left;
+			let newY = event.changedTouches[0].pageY - offset.top;
+			console.log("LIFT" + newX + ",  " +newY)
+			drawLine(current.x,current.y,newX,newY,current.color,true);
+			current.x = newX;
+			current.y = newY;
+		}else if (event.touches.length == 1){
+			event.preventDefault();
+			current.x = event.targetTouches[0].pageX - offset.left;
+			current.y = event.targetTouches[0].pageY - offset.top;
+			
+		}
+		
 	}
 
     function onMouseDown(e){
