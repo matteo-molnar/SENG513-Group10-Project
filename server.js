@@ -35,12 +35,12 @@ const users = require('./routes/users');
 
 // View engine --> handlebars : allows to dynamically change HTML
 app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', exphbs({defaultLayout:'layout'}));
+app.engine('handlebars', exphbs({ defaultLayout: 'layout' }));
 app.set('view engine', 'handlebars');
 
 // bodyparser and cookie parser middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Serve the Client
@@ -59,18 +59,18 @@ app.use(passport.session());
 
 // Express Validator
 app.use(expressValidator({
-    errorFormatter: function(param, msg, value) {
+    errorFormatter: function (param, msg, value) {
         let namespace = param.split('.')
-        , root = namespace.shift()
-        , formParam = root;
+            , root = namespace.shift()
+            , formParam = root;
 
-        while(namespace.length) {
+        while (namespace.length) {
             formParam += '[' + namespace.shift() + ']';
         }
         return {
-            param : formParam,
-            msg : msg,
-            value : value
+            param: formParam,
+            msg: msg,
+            value: value
         };
     }
 }));
@@ -97,13 +97,6 @@ app.use('/users', users); // change to be single page later
 // });
 
 
-
-
-
-
-
-
-
 // canvas' logic
 const Jimp = require('jimp');
 const fs = require('fs');
@@ -114,20 +107,20 @@ initializeRooms('public/rooms/rooms.json');
 io.on('connection', onConnection);
 
 // Saves an object as a string into a file
-function saveToFile(object, filePath){
+function saveToFile(object, filePath) {
     let json = JSON.stringify(object);
-    fs.writeFile(filePath, json, 'utf8', function(){
+    fs.writeFile(filePath, json, 'utf8', function () {
         console.log('saved to file');
     })
 }
 
 // Resizes and generates a base64 encoding of an image
-function encodingFromFile(filePath, callback){
+function encodingFromFile(filePath, callback) {
     let file = filePath;
-    Jimp.read(file, function(err, file) {
+    Jimp.read(file, function (err, file) {
         if (err) throw err;
         file.resize(720, 480);
-        file.getBase64(Jimp.AUTO, function(err, data) {
+        file.getBase64(Jimp.AUTO, function (err, data) {
             if (err) throw err;
             callback(data);
         });
@@ -135,8 +128,8 @@ function encodingFromFile(filePath, callback){
 }
 
 // Loads pre-existing rooms from file into the local rooms variable
-function initializeRooms(filePath){
-    fs.readFile(filePath, function(err, data){
+function initializeRooms(filePath) {
+    fs.readFile(filePath, function (err, data) {
         if (err) throw err;
         try {
             rooms = JSON.parse(data);
@@ -147,42 +140,42 @@ function initializeRooms(filePath){
     });
 }
 
-function onConnection(socket){
-    socket.on('makeRoom', function(data){
-        if (rooms.findIndex(room => room.id === data.name) === -1){
-            encodingFromFile(data.path, function(encoding){
+function onConnection(socket) {
+    socket.on('makeRoom', function (data) {
+        if (rooms.findIndex(room => room.id === data.name) === -1) {
+            encodingFromFile(data.path, function (encoding) {
                 var newRoom = {
                     "id": data.name,
                     "encoding": encoding
                 }
                 rooms.push(newRoom);
                 saveToFile(rooms, 'public/rooms/rooms.json');
-                console.log('rooms: '+rooms.length);
+                console.log('rooms: ' + rooms.length);
             });
         }
     });
 
-    socket.on('subscribe', function(data){
+    socket.on('subscribe', function (data) {
         var roomName = data;
         var index = rooms.findIndex(room => room.id === roomName);
         socket.join(roomName);
         console.log(socket.id + ' joined room: ' + data);
-            io.to(socket.id).emit('history', rooms[index].encoding);
-        socket.on('drawing', function(data){
+        io.to(socket.id).emit('history', rooms[index].encoding);
+        socket.on('drawing', function (data) {
             rooms[index].encoding = data.canvas;
             io.sockets.in(roomName).emit('drawing', data);
         });
-		socket.on('clrCanvas',function(data){
-			rooms[index].encoding = data.canvas;
-			io.sockets.in(roomName).emit('clearCanvas',data.canvas);	
-		});
+        socket.on('clrCanvas', function (data) {
+            rooms[index].encoding = data.canvas;
+            io.sockets.in(roomName).emit('clearCanvas', data.canvas);
+        });
     });
 }
 
 
-
+// CHAT SERVER LOGIC
 // Connect to mongo
-mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
+mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
     if (err) {
         throw err;
     }
@@ -190,16 +183,16 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
     console.log('Mongodb connected...');
 
     // Connect to socket.io
-    io.on('connection', function(socket) {
+    io.on('connection', function (socket) {
         let chat = db.collection('chats');
 
         // Create function to send status
-        sendStatus = function(s) {
+        sendStatus = function (s) {
             socket.emit('status', s);
         }
 
         // Get chats from mongo collection
-        chat.find().limit(100).sort({_id:1}).toArray(function(err, res) {
+        chat.find().limit(100).sort({ _id: 1 }).toArray(function (err, res) {
             if (err) {
                 throw err;
             }
@@ -209,7 +202,7 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
         });
 
         // Handle input events
-        socket.on('input', function(data) {
+        socket.on('input', function (data) {
             let name = data.name;
             let message = data.message;
 
@@ -220,7 +213,7 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
             }
             else {
                 // Insert message
-                chat.insert({name: name, message: message}, function() {
+                chat.insert({ name: name, message: message }, function () {
                     io.emit('output', [data]);
 
                     // Send status object
@@ -233,12 +226,13 @@ mongo.connect('mongodb://127.0.0.1/mydb', function(err, db) {
         });
 
         // Handle clear
-        socket.on('clear', function(data) {
+        socket.on('clear', function (data) {
             // Remove all chats from collection
-            chat.remove({}, function() {
+            chat.remove({}, function () {
                 // Emit cleared
                 socket.emit('cleared');
             });
         });
     });
 });
+// END CHAT SERVER LOGIC

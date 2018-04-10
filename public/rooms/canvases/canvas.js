@@ -1,15 +1,15 @@
-'use strict';
+// 'use strict';
 
-let debug = false;
-var socket = io();
+// let debug = false;
+// var socket = io();
 
-function setIntent(roomName) {
-    io.intent = roomName;
-    console.log('intent set: ' + io.intent);
-}
+// function setIntent(roomName) {
+//     io.intent = roomName;
+//     console.log('intent set: ' + io.intent);
+// }
 
-function joinRoom(roomName) {
-    socket.emit('subscribe', roomName);
+// function joinRoom(roomName) {
+//     socket.emit('subscribe', roomName);
 
     // var socket = io();
     var canvas = document.getElementsByClassName('whiteboard')[0];
@@ -230,4 +230,4 @@ function joinRoom(roomName) {
             }
         }
     }
-}
+//}

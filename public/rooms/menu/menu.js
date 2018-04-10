@@ -4,7 +4,7 @@ let add_button = $('#btn-add');
 let last_button = $('#btn4');
 
 $('#btn').on('click', function(){
-    $("#includedContent").load("/rooms/canvas.html");
+    $("#includedContent").load("/rooms/canvases/canvas.html");
     setIntent($('#btn').text());
 })
 
@@ -16,7 +16,7 @@ $('#btn-make').on('click', function(){
 })	
 
 $('#btn2').on('click', function(){
-    $("#includedContent").load("/rooms/canvas.html");
+    $("#includedContent").load("/rooms/canvases/canvas.html");
     setIntent($('#btn2').text());
 })
 
@@ -28,7 +28,7 @@ $('#btn2-make').on('click', function(){
 })
 
 $('#btn3').on('click', function(){
-    $("#includedContent").load("/rooms/canvas.html");
+    $("#includedContent").load("/rooms/canvases/canvas.html");
     setIntent($('#btn3').text());
 })
 
@@ -40,7 +40,7 @@ $('#btn3-make').on('click', function(){
 })
 
 $('#btn4').on('click', function(){
-    $("#includedContent").load("/rooms/canvas.html");
+    $("#includedContent").load("/rooms/canvases/canvas.html");
     setIntent($('#btn4').text());
 })
 
@@ -54,7 +54,7 @@ $('#btn4-make').on('click', function(){
 function gotoroom(room){
     let room_str = room;
     $('#btn4').on('click', function(){
-        $("#includedContent").load("/rooms/canvas.html");
+        $("#includedContent").load("/rooms/canvases/canvas.html");
         setIntent($('#btn4').text());
     })
 }
@@ -99,7 +99,7 @@ $('#btn-add').on('click', function(){
     element.insertBefore(element_add);
 
     document.getElementById(button_id).addEventListener('click', function(){
-        $("#includedContent").load("/rooms/canvas.html");
+        $("#includedContent").load("/rooms/canvases/canvas.html");
         setIntent($('#'+button_id).text());
     })
 
