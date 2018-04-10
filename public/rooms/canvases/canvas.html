@@ -5,6 +5,9 @@
     <title>Socket.IO whiteboard</title>
     <link rel="stylesheet" href="/rooms/canvas/style.css">
     <script src="/rooms/canvases/canvas.js"></script>
+    <script>$(function(){
+        $("#chatContainer").load("/rooms/chats/chat.html");
+    });</script>
 </head>
 <body>
     <h2>This is room #</h2>
@@ -16,8 +19,13 @@
             <div class="color blue"></div>
             <div class="color yellow"></div>
         </div>
-        <div class="canvasContainer">
-            <canvas class="whiteboard" ></canvas>
+        <div class="row">
+            <div class="col float-left" id="canvasContainer">
+                <canvas class="whiteboard" ></canvas>
+            </div>
+            <div class="col float-right" id="chatContainer">
+                chatbox
+            </div>
         </div>
     </div>
     <!-- <script src="/socket.io/socket.io.js"></script>

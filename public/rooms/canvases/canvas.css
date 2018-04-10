@@ -14,7 +14,7 @@ html, body {
  * Canvas
  */
 
-.canvasContainer {
+#canvasContainer {
   overflow: auto;
 }
 

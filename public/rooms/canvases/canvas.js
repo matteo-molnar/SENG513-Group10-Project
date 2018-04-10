@@ -99,8 +99,8 @@
     //Modified to draw points from top left of canvas instead of page
     function drawLine(x0, y0, x1, y1, color, emit){
         context.beginPath();
-        context.moveTo(x0 + $(".canvasContainer").scrollLeft(), y0);
-        context.lineTo(x1 + $(".canvasContainer").scrollLeft(), y1);
+        context.moveTo(x0 + $("#canvasContainer").scrollLeft(), y0);
+        context.lineTo(x1 + $("#canvasContainer").scrollLeft(), y1);
         context.strokeStyle = color;
         context.lineWidth = 2;
         context.stroke();
