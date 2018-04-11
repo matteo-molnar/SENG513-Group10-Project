@@ -10,7 +10,7 @@
     });</script>
 </head>
 <body>
-    <h2>This is room #</h2>
+    <h2 id='roomname'></h2>
     <div>
 	    <div class="colors">
             <div class="color black"></div>
@@ -34,7 +34,8 @@
 
     <script>
         joinRoom(io.intent);
+        $('#roomname').text(io.intent);
     </script>
-    
+
 </body>
 </html>
