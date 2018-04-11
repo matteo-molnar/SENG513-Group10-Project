@@ -100,18 +100,28 @@ app.use('/users', users); // change to be single page later
 // canvas' logic
 const Jimp = require('jimp');
 const fs = require('fs');
+const Canvas = require('canvas-prebuilt');
+const Image = Canvas.Image;
+
 let rooms;
+let whiteboards = [];
+
+//loads existing rooms from rooms.json
 initializeRooms('public/rooms/rooms.json');
 
-// io respond on client;s connection
+// io respond on client's connection
 io.on('connection', onConnection);
 
 // Saves an object as a string into a file
-function saveToFile(object, filePath) {
-    let json = JSON.stringify(object);
+function saveToFile(filePath, perpetuate) {
+    for (i in rooms){
+        rooms[i].encoding = whiteboards[i].toDataURL();
+    }
+    let json = JSON.stringify(rooms);
     fs.writeFile(filePath, json, 'utf8', function () {
         console.log('saved to file');
     })
+    if (perpetuate) setTimeout(saveToFile, 5000, 'public/rooms/rooms.json', true);
 }
 
 // Resizes and generates a base64 encoding of an image
@@ -137,6 +147,16 @@ function initializeRooms(filePath) {
             rooms = [];
         }
         console.log('Rooms loaded...');
+        //create an array of virtual canvases
+        for (i in rooms) {
+            whiteboards.push(new Canvas(720, 480));
+            let ctx = whiteboards[i].getContext('2d');
+            let img = new Image;
+            img.src = rooms[i].encoding;
+            ctx.drawImage(img, 0, 0);
+        }
+        console.log('Canvases initialized...');
+        saveToFile('public/rooms/rooms.json', true);
     });
 }
 
@@ -149,8 +169,14 @@ function onConnection(socket) {
                     "encoding": encoding
                 }
                 rooms.push(newRoom);
-                saveToFile(rooms, 'public/rooms/rooms.json');
                 console.log('rooms: ' + rooms.length);
+                //create a new virtual canvas for the new room
+                whiteboards.push(new Canvas(720, 480));
+                let ctx = whiteboards[whiteboards.length-1].getContext('2d');
+                let img = new Image;
+                img.src = rooms[whiteboards.length-1].encoding;
+                ctx.drawImage(img, 0, 0);
+                saveToFile('public/rooms/rooms.json', false);
             });
         }
     });
@@ -160,13 +186,26 @@ function onConnection(socket) {
         var index = rooms.findIndex(room => room.id === roomName);
         socket.join(roomName);
         console.log(socket.id + ' joined room: ' + data);
+        rooms[index].encoding = whiteboards[index].toDataURL();
         io.to(socket.id).emit('history', rooms[index].encoding);
         socket.on('drawing', function (data) {
-            rooms[index].encoding = data.canvas;
+            //draw on the virtual canvas
+            let ctx = whiteboards[index].getContext('2d');
+            ctx.beginPath();
+            ctx.moveTo(data.x0*whiteboards[index].width, data.y0*whiteboards[index].height);
+            ctx.lineTo(data.x1*whiteboards[index].width, data.y1*whiteboards[index].height);
+            ctx.strokeStyle = data.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+            //emit to the rest of the room
             io.sockets.in(roomName).emit('drawing', data);
         });
         socket.on('clrCanvas', function (data) {
-            rooms[index].encoding = data.canvas;
+            //clear the virtual canvas
+            let ctx = whiteboards[index].getContext('2d');
+            ctx.clearRect(0,0,whiteboards[index].width,whiteboards[index].height);
+            //emit to the rest of the room
             io.sockets.in(roomName).emit('clearCanvas', data.canvas);
         });
     });
