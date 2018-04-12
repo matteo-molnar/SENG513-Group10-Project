@@ -19,7 +19,12 @@
     canvas.height = 480;
 
     var divPos = {};
-    var offset = $('.whiteboard').offset();
+    var offset;
+    updateOffset();
+
+    $(document).ready(updateOffset);
+
+
     $(document).mousemove(function(e){
         console.log('mousemove');
         console.log("offset" + offset.left+", "+offset.top);
@@ -94,7 +99,7 @@
 
 	});
 
-    window.addEventListener('resize', onResize, false);
+    window.addEventListener('resize', updateOffset, false);
 
     //Modified to draw points from top left of canvas instead of page
     function drawLine(x0, y0, x1, y1, color, emit){
@@ -209,7 +214,7 @@
     }
 
     // update the position relative screen corners
-    function onResize() {
+    function updateOffset() {
         offset = $('.whiteboard').offset();
     }
 
