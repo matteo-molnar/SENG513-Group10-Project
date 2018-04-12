@@ -30,26 +30,26 @@
         };
         console.log("divPos"+divPos.left+", "+divPos.top);
     });
-	
-	 
-	
-	
+
+
+
+
 
     var current = {
         color: 'black'
     };
-	
-	
+
+
     var drawing = false;
-	
-	
+
+
 
     canvas.addEventListener('mousedown', onMouseDown, false);
     canvas.addEventListener('mouseup', onMouseUp, false);
     canvas.addEventListener('mouseout', onMouseUp, false);
     canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
 	canvas.addEventListener('touchstart', onTouch, false);
-	canvas.addEventListener('touchmove', onTouchMove, false);		
+	canvas.addEventListener('touchmove', onTouchMove, false);
 	canvas.addEventListener('touchend', onTouchLift, false);
 
 
@@ -62,15 +62,15 @@
 	socket.on('clearCanvas',function(img){
 		context.clearRect(0,0,canvas.width,canvas.height);
 	});
-	
+
 	$('#clrBtn').on('click', function(){
 		context.clearRect(0,0,canvas.width,canvas.height);
 		let canvasData = canvas.toDataURL();
 		socket.emit('clrCanvas', {
 			canvas: canvasData
-		});	
+		});
 	});
-	
+
 	$('#dlBtn').on('click',function(e){
 		let data = context.getImageData(0, 0, canvas.width, canvas.height);
 		let compositeOperation = context.globalCompositeOperation;
@@ -79,21 +79,21 @@
 		context.fillRect(0,0,canvas.width,canvas.height);
 		$('#dlBtn').attr("href",canvas.toDataURL('image/png'));
 		$('#dlBtn').attr("download",roomName + ".png");
-		
+
 		//clear the canvas
 		context.clearRect (0,0,canvas.width,canvas.height);
- 
+
 		//restore it with original / cached ImageData
 		context.putImageData(data, 0,0);
- 
+
 		//reset the globalCompositeOperation to what it was
 		context.globalCompositeOperation = compositeOperation;
-		
-		
+
+
 		console.log('hi');
-		
+
 	});
-	
+
     window.addEventListener('resize', onResize, false);
 
     //Modified to draw points from top left of canvas instead of page
@@ -116,11 +116,10 @@
             y0: y0 / h,
             x1: x1 / w,
             y1: y1 / h,
-            color: color,
-            canvas: canvasData
+            color: color
         });
     }
-	
+
 	function onTouch(event){
 		if(event.touches.length == 1){
 			current.x = event.targetTouches[0].pageX - offset.left;
@@ -128,7 +127,7 @@
 			console.log("touch" + current.x + ", " + current.y);
 		}
 	}
-	
+
 	function onTouchMove(event){
 		event.cancellable = true;
 		if(event.touches.length >1){
@@ -145,12 +144,12 @@
 			current.y = newY;
 		}
 	}
-	
-	
-	
+
+
+
 	function onTouchLift(event){
 		if(event.touches.length == 0 ){
-			
+
 			let newX = event.changedTouches[0].pageX - offset.left;
 			let newY = event.changedTouches[0].pageY - offset.top;
 			console.log("LIFT" + newX + ",  " +newY)
@@ -161,9 +160,9 @@
 			event.preventDefault();
 			current.x = event.targetTouches[0].pageX - offset.left;
 			current.y = event.targetTouches[0].pageY - offset.top;
-			
+
 		}
-		
+
 	}
 
     function onMouseDown(e){
