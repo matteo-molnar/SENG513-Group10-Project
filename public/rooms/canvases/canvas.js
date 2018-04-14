@@ -1,6 +1,6 @@
 // 'use strict';
 
-// let debug = false;
+debug = false;
 // var socket = io();
 
 // function setIntent(roomName) {
@@ -26,14 +26,14 @@
 
 
     $(document).mousemove(function(e){
-        console.log('mousemove');
-        console.log("offset" + offset.left+", "+offset.top);
-        console.log("e"+e.pageX+", "+e.pageY);
+        //console.log('mousemove');
+        //console.log("offset" + offset.left+", "+offset.top);
+        //console.log("e"+e.pageX+", "+e.pageY);
         divPos = {
             left: e.pageX - offset.left,
             top: e.pageY - offset.top
         };
-        console.log("divPos"+divPos.left+", "+divPos.top);
+        //console.log("divPos"+divPos.left+", "+divPos.top);
     });
 
 

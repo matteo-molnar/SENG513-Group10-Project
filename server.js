@@ -43,6 +43,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Connect Chat to mongo
+// mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
+//     if (err) {
+//         throw err;
+//     }
+//     console.log('Mongodb Chat connected...');
+// });
+
 // Serve the Client
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -114,7 +122,7 @@ io.on('connection', onConnection);
 
 // Saves an object as a string into a file
 function saveToFile(filePath, perpetuate) {
-    for (i in rooms){
+    for (i in rooms) {
         rooms[i].encoding = whiteboards[i].toDataURL();
     }
     let json = JSON.stringify(rooms);
@@ -172,9 +180,9 @@ function onConnection(socket) {
                 console.log('rooms: ' + rooms.length);
                 //create a new virtual canvas for the new room
                 whiteboards.push(new Canvas(720, 480));
-                let ctx = whiteboards[whiteboards.length-1].getContext('2d');
+                let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
                 let img = new Image;
-                img.src = rooms[whiteboards.length-1].encoding;
+                img.src = rooms[whiteboards.length - 1].encoding;
                 ctx.drawImage(img, 0, 0);
                 saveToFile('public/rooms/rooms.json', false);
             });
@@ -186,14 +194,19 @@ function onConnection(socket) {
         var index = rooms.findIndex(room => room.id === roomName);
         socket.join(roomName);
         console.log(socket.id + ' joined room: ' + data);
+        //chatSubscribe(roomName, socket);
+
+        let chat = db.collection(roomName);
+        console.log("Chat connected to room: " + roomName);
+
         rooms[index].encoding = whiteboards[index].toDataURL();
         io.to(socket.id).emit('history', rooms[index].encoding);
         socket.on('drawing', function (data) {
             //draw on the virtual canvas
             let ctx = whiteboards[index].getContext('2d');
             ctx.beginPath();
-            ctx.moveTo(data.x0*whiteboards[index].width, data.y0*whiteboards[index].height);
-            ctx.lineTo(data.x1*whiteboards[index].width, data.y1*whiteboards[index].height);
+            ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
+            ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
             ctx.strokeStyle = data.color;
             ctx.lineWidth = 2;
             ctx.stroke();
@@ -204,34 +217,24 @@ function onConnection(socket) {
         socket.on('clrCanvas', function (data) {
             //clear the virtual canvas
             let ctx = whiteboards[index].getContext('2d');
-            ctx.clearRect(0,0,whiteboards[index].width,whiteboards[index].height);
+            ctx.clearRect(0, 0, whiteboards[index].width, whiteboards[index].height);
             //emit to the rest of the room
             io.sockets.in(roomName).emit('clearCanvas', data.canvas);
         });
-    });
-}
 
 
-// CHAT SERVER LOGIC
-// Connect to mongo
-mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
-    if (err) {
-        throw err;
-    }
 
-    console.log('Mongodb connected...');
-
-    // Connect to socket.io
-    io.on('connection', function (socket) {
-        let chat = db.collection('chats');
-
-        // Create function to send status
         sendStatus = function (s) {
             socket.emit('status', s);
         }
 
         // Get chats from mongo collection
-        chat.find().limit(100).sort({ _id: 1 }).toArray(function (err, res) {
+        // chat.find().limit(100).sort({ _id: 1 }).toArray(function (err, res) {
+        //     if (err) {
+        //         throw err;
+        //     }
+
+        chat.find({}).toArray(function (err, res) {
             if (err) {
                 throw err;
             }
@@ -240,6 +243,9 @@ mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
             socket.emit('output', res);
         });
 
+
+
+        // CHAT SOCKET EVENTS
         // Handle input events
         socket.on('input', function (data) {
             let name = data.name;
@@ -272,6 +278,16 @@ mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
                 socket.emit('cleared');
             });
         });
+
+
+
+
+
+
+
     });
-});
-// END CHAT SERVER LOGIC
+
+
+}
+
+

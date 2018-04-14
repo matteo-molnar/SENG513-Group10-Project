@@ -1,14 +1,14 @@
 (function () {
-
   // connect to server socket
-  let socket = io();
+  //let socket = io();
+
+  
 
   var element = function (id) {
     return document.getElementById(id);
   }
 
   // Get Elements
-
   var status = element('status');
   var messages = element('messages');
   var textarea = element('textarea');
@@ -29,12 +29,10 @@
     }
   }
 
-  // Connect to socket.io
-  //var socket = io.connect('http://127.0.0.1:4000');
-
   // Check for connection
   if (socket != undefined) {
-    console.log('Connected to socket...');
+    console.log('Chat Connected to socket...');
+
 
     // Handle output
     socket.on('output', function (data) {
