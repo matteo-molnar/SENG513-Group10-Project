@@ -8,9 +8,12 @@ socket.on('roomData', function(data) {
 	var i;
 	for(i = 0; i < roomsArray.length; i++){
 		let element = $('<li>');
+		let checkbox = document.createElement('input');
 		let element_add = $('#btn-add-li');
 		let myButton = document.createElement('button');
 		rooms_count = i + 1;
+
+        let checkbox_id = 'checkbox' + rooms_count;
 		let button_id = 'btn' + rooms_count;
 		let button_txt = canvas_room_str + rooms_count;
 		let button_class = '';
@@ -30,13 +33,25 @@ socket.on('roomData', function(data) {
 			button_class = "\"btn btn-danger\"";
 		}
 		//console.log(button_class);
+		checkbox = "<input type=\"checkbox\" id=" + checkbox_id +  ">";
 		myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
+		element.append(checkbox);
 		element.append(myButton);
 		element.insertBefore(element_add);
+		//add event listener for button
 		document.getElementById(button_id).addEventListener('click', function(){
 			$("#includedContent").load("/rooms/canvases/canvas.html");
 			setIntent($('#'+button_id).text());
 		})
+
+		//add event listener for checkbox
+        document.getElementById(checkbox_id).addEventListener( 'change', function() {
+            if(this.checked) {
+                console.log(checkbox_id + ' is checked');
+            } else {
+                // Checkbox is not checked..
+            }
+        });
 	}
 });
 //not used?
@@ -51,8 +66,11 @@ $('#btn-add').on('click', function(){
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
 	let element = $('<li>');
+    let checkbox = document.createElement('input');
 	let element_add = $('#btn-add-li');
+
 	let myButton = document.createElement('button');
+    let checkbox_id = 'checkbox' + rooms_count;
 	let button_id = 'btn' + rooms_count;
 	let button_txt = canvas_room_str + rooms_count;
 	let button_class = '';
@@ -71,14 +89,26 @@ $('#btn-add').on('click', function(){
 	else{
 		button_class = "\"btn btn-danger\"";
 	}
-	//console.log(button_class);
+
+    checkbox = "<input type=\"checkbox\" id=" + checkbox_id +  ">";
 	myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
+    element.append(checkbox);
 	element.append(myButton);
 	element.insertBefore(element_add);
 	document.getElementById(button_id).addEventListener('click', function(){
 		$("#includedContent").load("/rooms/canvases/canvas.html");
 		setIntent($('#'+button_id).text());
 	})
+
+    //add event listener for checkbox
+    document.getElementById(checkbox_id).addEventListener( 'change', function() {
+        if(this.checked) {
+            console.log(checkbox_id + ' is checked');
+        } else {
+            // Checkbox is not checked..
+        }
+    });
+
 	socket.emit('makeRoom', {
 		'name': canvas_room_str + rooms_count,
 		'path': 'stock_apple.png'
