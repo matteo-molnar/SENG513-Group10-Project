@@ -169,6 +169,8 @@ function initializeRooms(filePath) {
 }
 
 function onConnection(socket) {
+	io.to(socket.id).emit('roomData', rooms);
+	
     socket.on('makeRoom', function (data) {
         if (rooms.findIndex(room => room.id === data.name) === -1) {
             encodingFromFile(data.path, function (encoding) {
