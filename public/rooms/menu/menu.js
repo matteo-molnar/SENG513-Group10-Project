@@ -3,30 +3,31 @@ let rooms_count = 0;
 let canvas_room_str = "Canvas Room ";
 socket.on('roomData', function(data) {
 	roomsArray = data;
-	rooms_count = roomsArray.length;
+	//rooms_count = roomsArray.length;
 	console.log(roomsArray.length);
 	var i;
-	for(i = 0; i < roomsArray.length; i++){
+	for(i = rooms_count + 1; i <= roomsArray.length; i++){
 		let element = $('<li>');
 		let checkbox = document.createElement('input');
 		let element_add = $('#btn-add-li');
 		let myButton = document.createElement('button');
-		rooms_count = i + 1;
+		//rooms_count = i + 1;
 
-        let checkbox_id = 'checkbox' + rooms_count;
-		let button_id = 'btn' + rooms_count;
-		let button_txt = canvas_room_str + rooms_count;
+        let checkbox_id = 'checkbox' + i;
+		let button_id = 'btn' + i;
+		let button_txt = roomsArray[i-1].id;
+		console.log(button_txt);
 		let button_class = '';
-		if(rooms_count%5===0){
+		if(i%5===0){
 			button_class = "\"btn btn-secondary\"";
 		}
-		else if(rooms_count%5===1){
+		else if(i%5===1){
 			button_class = "\"btn btn-primary\"";
 		}
-		else if(rooms_count%5===2){
+		else if(i%5===2){
 			button_class = "\"btn btn-success\"";
 		}
-		else if(rooms_count%5===3){
+		else if(i%5===3){
 			button_class = "\"btn btn-warning\"";
 		}
 		else{
@@ -53,6 +54,7 @@ socket.on('roomData', function(data) {
             }
         });
 	}
+	rooms_count = roomsArray.length;
 });
 //not used?
 function gotoroom(room){
@@ -63,6 +65,7 @@ function gotoroom(room){
 	})
 }
 $('#btn-add').on('click', function(){
+    let room_name = prompt("Please enter name of canvas room", "ex. The Matrix");
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
 	let element = $('<li>');
@@ -72,7 +75,7 @@ $('#btn-add').on('click', function(){
 	let myButton = document.createElement('button');
     let checkbox_id = 'checkbox' + rooms_count;
 	let button_id = 'btn' + rooms_count;
-	let button_txt = canvas_room_str + rooms_count;
+	let button_txt = room_name;
 	let button_class = '';
 	if(rooms_count%5===0){
 		button_class = "\"btn btn-secondary\"";
@@ -110,7 +113,7 @@ $('#btn-add').on('click', function(){
     });
 
 	socket.emit('makeRoom', {
-		'name': canvas_room_str + rooms_count,
+		'name': room_name,
 		'path': 'stock_apple.png'
 	})
 })
