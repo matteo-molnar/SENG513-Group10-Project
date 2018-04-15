@@ -15,6 +15,9 @@ const session = require('express-session');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
+const fs = require('fs');
+const Canvas = require('canvas-prebuilt');
+const Image = Canvas.Image;
 
 // connect to database with mongoose
 mongoose.connect('mongodb://localhost/seng513db', function (err, db) {
@@ -91,11 +94,6 @@ app.use('/', routes);
 app.use('/users', users); // change to be single page later
 
 // canvas' logic
-const Jimp = require('jimp');
-const fs = require('fs');
-const Canvas = require('canvas-prebuilt');
-const Image = Canvas.Image;
-
 let rooms;
 let whiteboards = [];
 
@@ -115,19 +113,6 @@ function saveToFile(filePath, perpetuate) {
         console.log('saved to file');
     })
     if (perpetuate) setTimeout(saveToFile, 15000, 'public/rooms/rooms.json', true);
-}
-
-// Resizes and generates a base64 encoding of an image
-function encodingFromFile(filePath, callback) {
-    let file = filePath;
-    Jimp.read(file, function (err, file) {
-        if (err) throw err;
-        file.resize(720, 480);
-        file.getBase64(Jimp.AUTO, function (err, data) {
-            if (err) throw err;
-            callback(data);
-        });
-    });
 }
 
 // Loads pre-existing rooms from file into the local rooms variable
@@ -157,44 +142,23 @@ function onConnection(socket) {
 	io.to(socket.id).emit('roomData', rooms);
 
     socket.on('makeRoom', function (data) {
-        if (rooms.findIndex(room => room.id === data.name) === -1) {
-            if(data.encoding !== ''){
-                console.log("there is encoding");
-
-                var newRoom = {
-                    "id": data.name,
-                    "encoding": data.encoding
-                }
-                console.log(data.encoding);
-                rooms.push(newRoom);
-                console.log('rooms: ' + rooms.length);
-                //create a new virtual canvas for the new room
-                whiteboards.push(new Canvas(720, 480));
-                let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
+        if (rooms.findIndex(room => room.id === data.name) === -1 && data.name !== "") {
+            var newRoom = {
+                "id": data.name,
+                "encoding": data.encoding
+            }
+            rooms.push(newRoom);
+            console.log('rooms: ' + rooms.length);
+            //create a new virtual canvas for the new room
+            whiteboards.push(new Canvas(720, 480));
+            let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
+            if (data.encoding) {
                 let img = new Image;
                 img.src = rooms[whiteboards.length - 1].encoding;
                 ctx.drawImage(img, 0, 0, 720, 480);
-                saveToFile('public/rooms/rooms.json', false);
-                io.emit('roomData', rooms);
             }
-            else{
-                encodingFromFile(data.path, function (encoding) {
-                    var newRoom = {
-                        "id": data.name,
-                        "encoding": encoding
-                    }
-
-                    rooms.push(newRoom);
-                    console.log('rooms: ' + rooms.length);
-                    //create a new virtual canvas for the new room
-                    whiteboards.push(new Canvas(720, 480));
-                    let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
-                    let img = new Image;
-                    img.src = rooms[whiteboards.length - 1].encoding;
-                    ctx.drawImage(img, 0, 0);
-                    saveToFile('public/rooms/rooms.json', false);
-                });
-            }
+            saveToFile('public/rooms/rooms.json', false);
+            io.emit('roomData', rooms);
         }
     });
 
