@@ -50,7 +50,6 @@ debug = false;
     var drawing = false;
 
 
-	var mode="pen";
 
 
     canvas.addEventListener('mousedown', onMouseDown, false);
@@ -91,14 +90,19 @@ debug = false;
         thicknesses[i].addEventListener('click', onThicknessUpdate, false);
     }
     $(".pencil").click(function(){
-        mode="pen";
         $(this).css("border", "1px solid black");
         $(".eraser").css("border", "1px solid grey");
+        current.color="black";
+        current.thickness=2;
     });
     $(".eraser").click(function(){
-        mode="eraser";
         $(this).css("border", "1px solid black");
         $(".pencil").css("border", "1px solid grey");
+        $("."+current.color).css("border", "none");
+        $(".t-"+current.thickness).css("border", "1px solid grey");
+        current.color="white";
+        current.thickness=10;
+
     });
 
     socket.on('drawing', onDrawingEvent);
@@ -146,32 +150,25 @@ debug = false;
 			x1 += $("#canvasContainer").scrollLeft();
 		}
 
-		if(mode=="pen"){
-			context.globalCompositeOperation="source-over";
-			context.moveTo(x0 , y0);
-			context.lineTo(x1 , y1);
-			context.strokeStyle = color;
-			context.lineWidth = thickness;
-			context.stroke();
-		}else{
-			context.globalCompositeOperation="destination-out";
-			context.arc(x0,y0,8,0,Math.PI*2,false);
-			context.fill();
-		}
+		context.globalCompositeOperation="source-over";
+		context.moveTo(x0 , y0);
+		context.lineTo(x1 , y1);
+		context.strokeStyle = color;
+		context.lineWidth = thickness;
+		context.stroke();
 		context.closePath();
         if (!emit) { return; }
         var w = canvas.width;
         var h = canvas.height;
 
-        let canvasData = canvas.toDataURL();
+        //let canvasData = canvas.toDataURL();
         socket.emit('drawing', {
 			x0: x0 / w,
 			y0: y0 / h,
 			x1: x1 / w,
 			y1: y1 / h,
             thickness: thickness,
-			color: color,
-			mode: mode
+			color: color
         });
     }
 
@@ -244,7 +241,6 @@ debug = false;
         let color = e.target.className.split(' ')[1];
         current.color = color;
         $("."+color).css("border", "1px solid black");
-        mode="pen";
     }
 
     function onThicknessUpdate(e){
@@ -253,7 +249,6 @@ debug = false;
         current.thickness = thickness;
         $(".t-"+thickness).css("border", "1px solid black");
         console.log(current.thickness);
-        mode="pen";
     }
 
     // limit the number of events per second
@@ -273,13 +268,8 @@ debug = false;
         debug && console.log('onDrawingEvent');
         var w = canvas.width;
         var h = canvas.height;
-        let savedMode=mode;
-        if(data.mode != mode){
-			mode=data.mode;
-		}
-        console.log(data.thickness);
+
         drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.thickness, data.color);
-        mode=savedMode;
     }
 
     // update the position relative screen corners

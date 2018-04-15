@@ -187,6 +187,7 @@ function onConnection(socket) {
                 img.src = rooms[whiteboards.length - 1].encoding;
                 ctx.drawImage(img, 0, 0);
                 saveToFile('public/rooms/rooms.json', false);
+                io.emit('roomData', rooms);
             });
         }
     });
@@ -224,20 +225,12 @@ function onConnection(socket) {
             //draw on the virtual canvas
             let ctx = whiteboards[index].getContext('2d');
             ctx.beginPath();
-
-            //erasing mode?
-            if(data.mode=="pen"){
-				ctx.globalCompositeOperation="source-over";
-				ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
-				ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
-				ctx.strokeStyle = data.color;
-				ctx.lineWidth = data.thickness;
-				ctx.stroke();
-			}else{
-				ctx.globalCompositeOperation="destination-out";
-				ctx.arc(data.x0,data.y0,8,0,Math.PI*2,false);
-				ctx.fill();
-			}
+			ctx.globalCompositeOperation="source-over";
+			ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
+			ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
+			ctx.strokeStyle = data.color;
+			ctx.lineWidth = data.thickness;
+			ctx.stroke();
             ctx.closePath();
             //emit to the rest of the room
             io.sockets.in(roomName).emit('drawing', data);
