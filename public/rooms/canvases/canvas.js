@@ -46,7 +46,9 @@ debug = false;
 
 
     var drawing = false;
-
+    
+    
+	var mode="pen";
 
 
     canvas.addEventListener('mousedown', onMouseDown, false);
@@ -61,6 +63,17 @@ debug = false;
     for (var i = 0; i < colors.length; i++){
         colors[i].addEventListener('click', onColorUpdate, false);
     }
+    
+    $("#penBtn").click(function(){
+		mode="pen";
+		$(this).prop("disabled", true);
+		$("#eraBtn").prop("disabled", false);
+		});
+	$("#eraBtn").click(function(){
+		mode="eraser";
+		$(this).prop("disabled", true);
+		$("#penBtn").prop("disabled", false);
+		});
 
     socket.on('drawing', onDrawingEvent);
     socket.on('history', swapCanvas);
@@ -103,32 +116,37 @@ debug = false;
 
     //Modified to draw points from top left of canvas instead of page
     function drawLine(x0, y0, x1, y1, color, emit){
-        context.beginPath();
-			if(emit){
-				context.moveTo(x0 + $("#canvasContainer").scrollLeft(), y0);
-				context.lineTo(x1 + $("#canvasContainer").scrollLeft(), y1);
-				
-			}else{
-				context.moveTo(x0 , y0);
-				context.lineTo(x1 , y1);
-			}
-			
+		context.beginPath();
+		if(emit){
+			x0 += $("#canvasContainer").scrollLeft();
+			x1 += $("#canvasContainer").scrollLeft();
+		}
+		
+		if(mode=="pen"){
+			context.globalCompositeOperation="source-over";
+			context.moveTo(x0 , y0);
+			context.lineTo(x1 , y1);
 			context.strokeStyle = color;
 			context.lineWidth = 2;
 			context.stroke();
-			context.closePath();
-
+		}else{
+			context.globalCompositeOperation="destination-out";
+			context.arc(x0,y0,8,0,Math.PI*2,false);
+			context.fill();
+		}
+		context.closePath();
         if (!emit) { return; }
         var w = canvas.width;
         var h = canvas.height;
-
+		
         let canvasData = canvas.toDataURL();
         socket.emit('drawing', {
-            x0: (x0 + $("#canvasContainer").scrollLeft())/ w,
-            y0: y0 / h,
-            x1: (x1 + $("#canvasContainer").scrollLeft())/ w,
-            y1: y1 / h,
-            color: color
+			x0: x0 / w,
+			y0: y0 / h,
+			x1: x1 / w,
+			y1: y1 / h,
+			color: color,
+			mode: mode
         });
     }
 
@@ -217,7 +235,12 @@ debug = false;
         debug && console.log('onDrawingEvent');
         var w = canvas.width;
         var h = canvas.height;
+        let savedMode=mode;
+        if(data.mode != mode){
+			mode=data.mode;
+		}
         drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+        mode=savedMode;
     }
 
     // update the position relative screen corners

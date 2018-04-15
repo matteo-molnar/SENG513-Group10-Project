@@ -224,11 +224,20 @@ function onConnection(socket) {
             //draw on the virtual canvas
             let ctx = whiteboards[index].getContext('2d');
             ctx.beginPath();
-            ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
-            ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
-            ctx.strokeStyle = data.color;
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            
+            //erasing mode?
+            if(data.mode=="pen"){
+				ctx.globalCompositeOperation="source-over";
+				ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
+				ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
+				ctx.strokeStyle = data.color;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+			}else{
+				ctx.globalCompositeOperation="destination-out";
+				ctx.arc(data.x0,data.y0,8,0,Math.PI*2,false);
+				ctx.fill();
+			}
             ctx.closePath();
             //emit to the rest of the room
             io.sockets.in(roomName).emit('drawing', data);

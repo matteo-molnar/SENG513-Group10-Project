@@ -13,6 +13,7 @@ let scale = .5;
 	//let listOfContext = [];
 	let listOfConvas = [];
 	let listOfRooms = [];
+	var mode="pen";
     $(document).ready(function(){
 		socket.emit('getCanvas',checkedList);
 	});
@@ -78,11 +79,18 @@ let scale = .5;
     //Modified to draw points from top left of canvas instead of page
     function drawLine(name,x0, y0, x1, y1, color, emit){
         listOfCanvas[name].context.beginPath();
-        listOfCanvas[name].context.moveTo((x0 + $("#canvasContainer" + listOfCanvas[name].container).scrollLeft()), y0);
-        listOfCanvas[name].context.lineTo((x1 + $("#canvasContainer" + listOfCanvas[name].container).scrollLeft()), y1);
-        listOfCanvas[name].context.strokeStyle = color;
-        listOfCanvas[name].context.lineWidth = 2*scale;
-        listOfCanvas[name].context.stroke();
+        if(mode=="pen"){
+			listOfCanvas[name].context.globalCompositeOperation="source-over";
+			listOfCanvas[name].context.moveTo((x0 + $("#canvasContainer" + listOfCanvas[name].container).scrollLeft()), y0);
+			listOfCanvas[name].context.lineTo((x1 + $("#canvasContainer" + listOfCanvas[name].container).scrollLeft()), y1);
+			listOfCanvas[name].context.strokeStyle = color;
+			listOfCanvas[name].context.lineWidth = 2*scale;
+			listOfCanvas[name].context.stroke();
+		}else{
+			listOfCanvas[name].context.globalCompositeOperation="destination-out";
+			listOfCanvas[name].context.arc(data.x0,data.y0,8,0,Math.PI*2,false);
+			listOfCanvas[name].context.fill();
+		}
         listOfCanvas[name].context.closePath();
 
 
@@ -111,6 +119,7 @@ let scale = .5;
 		}
         var w = listOfCanvas[info.name].canvas.width;
         var h = listOfCanvas[info.name].canvas.height;
+        mode=info.canvasData.mode;
         drawLine(info.name, info.canvasData.x0 * w, info.canvasData.y0 * h, info.canvasData.x1 * w, info.canvasData.y1 * h, info.canvasData.color);
     }
 
