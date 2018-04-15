@@ -158,11 +158,14 @@ function onConnection(socket) {
 
     socket.on('makeRoom', function (data) {
         if (rooms.findIndex(room => room.id === data.name) === -1) {
-            encodingFromFile(data.path, function (encoding) {
+            if(data.encoding !== ''){
+                console.log("there is encoding");
+
                 var newRoom = {
                     "id": data.name,
-                    "encoding": encoding
+                    "encoding": data.encoding
                 }
+                console.log(data.encoding);
                 rooms.push(newRoom);
                 console.log('rooms: ' + rooms.length);
                 //create a new virtual canvas for the new room
@@ -170,10 +173,28 @@ function onConnection(socket) {
                 let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
                 let img = new Image;
                 img.src = rooms[whiteboards.length - 1].encoding;
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, 0, 0, 720, 480);
                 saveToFile('public/rooms/rooms.json', false);
                 io.emit('roomData', rooms);
-            });
+            }
+            else{
+                encodingFromFile(data.path, function (encoding) {
+                    var newRoom = {
+                        "id": data.name,
+                        "encoding": encoding
+                    }
+
+                    rooms.push(newRoom);
+                    console.log('rooms: ' + rooms.length);
+                    //create a new virtual canvas for the new room
+                    whiteboards.push(new Canvas(720, 480));
+                    let ctx = whiteboards[whiteboards.length - 1].getContext('2d');
+                    let img = new Image;
+                    img.src = rooms[whiteboards.length - 1].encoding;
+                    ctx.drawImage(img, 0, 0);
+                    saveToFile('public/rooms/rooms.json', false);
+                });
+            }
         }
     });
 
