@@ -106,6 +106,9 @@ let scale = .5;
     function onMultiDrawingEvent(info){
         debug && console.log('onDrawingEvent');
 		console.log('drawing');
+		if(listOfRooms.indexOf(info.name) === -1){
+			return;
+		}
         var w = listOfCanvas[info.name].canvas.width;
         var h = listOfCanvas[info.name].canvas.height;
         drawLine(info.name, info.canvasData.x0 * w, info.canvasData.y0 * h, info.canvasData.x1 * w, info.canvasData.y1 * h, info.canvasData.color);
