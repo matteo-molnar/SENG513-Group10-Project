@@ -1,6 +1,13 @@
 
 #messages {
-  height: 300px;
+  height: 340px;
+  overflow-y: scroll;
+  word-wrap: break-word;
+  max-width:inherit;
+}
+
+#chat{
+  max-width:300px;
 }
 
 body{
