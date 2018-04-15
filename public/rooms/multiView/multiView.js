@@ -26,7 +26,7 @@ let scale = .5;
 
    
 
-    socket.on('multiDrawing', onMultiDrawingEvent);// have to do
+    socket.on('multiDrawing', onMultiDrawingEvent);
 	socket.on('canvasFromServer', setUpCanvas);
 
     //window.addEventListener('resize', updateOffset, false);
@@ -44,7 +44,8 @@ let scale = .5;
 			div.id = "canvasContainer" + counter;
 			canvas.classList.add('whiteboard');
 			canvas.addEventListener("click",function(){
-				
+				socket.removeEventListener('multiDrawing', onMultiDrawingEvent);// have to do
+
 				$("#includedContent").load("/rooms/canvases/canvas.html");
 				setIntent(nameCanvasPair.name);
 			});
@@ -113,14 +114,17 @@ let scale = .5;
 
     function onMultiDrawingEvent(info){
         debug && console.log('onDrawingEvent');
+		
 		console.log('drawing');
-		if(listOfRooms.indexOf(info.name) === -1){
-			return;
-		}
-        var w = listOfCanvas[info.name].canvas.width;
-        var h = listOfCanvas[info.name].canvas.height;
-        mode=info.canvasData.mode;
-        drawLine(info.name, info.canvasData.x0 * w, info.canvasData.y0 * h, info.canvasData.x1 * w, info.canvasData.y1 * h, info.canvasData.color);
+		//if(viewing){
+			if(listOfRooms.indexOf(info.name) === -1){
+				return;
+			}
+			var w = listOfCanvas[info.name].canvas.width;
+			var h = listOfCanvas[info.name].canvas.height;
+			mode=info.canvasData.mode;
+			drawLine(info.name, info.canvasData.x0 * w, info.canvasData.y0 * h, info.canvasData.x1 * w, info.canvasData.y1 * h, info.canvasData.color);
+		//}
     }
 
     // update the position relative screen corners

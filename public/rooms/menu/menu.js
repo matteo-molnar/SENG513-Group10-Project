@@ -114,7 +114,7 @@ $('#createRoomBtn').on('click', function(){
 		button_class = "\"btn btn-danger\"";
 	}
 
-    checkbox = "<input type=\"checkbox\" id=" + checkbox_id +  ">";
+    checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\">";
 	myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
     element.append(checkbox);
 	element.append(myButton);
