@@ -170,7 +170,7 @@ function initializeRooms(filePath) {
 
 function onConnection(socket) {
 	io.to(socket.id).emit('roomData', rooms);
-	
+
     socket.on('makeRoom', function (data) {
         if (rooms.findIndex(room => room.id === data.name) === -1) {
             encodingFromFile(data.path, function (encoding) {
@@ -190,7 +190,7 @@ function onConnection(socket) {
             });
         }
     });
-	
+
 	socket.on('getCanvas',function(listOfRooms){
 		let listOfHistory = [];
 		listOfRooms.forEach(function(roomName){
@@ -204,8 +204,8 @@ function onConnection(socket) {
 
 		});
 		socket.emit('canvasFromServer',listOfHistory);
-		
-		
+
+
 	});
 
     socket.on('subscribe', function (data) {
@@ -224,7 +224,7 @@ function onConnection(socket) {
             //draw on the virtual canvas
             let ctx = whiteboards[index].getContext('2d');
             ctx.beginPath();
-            
+
             //erasing mode?
             if(data.mode=="pen"){
 				ctx.globalCompositeOperation="source-over";
@@ -266,14 +266,14 @@ function onConnection(socket) {
         //         throw err;
         //     }
 
-        chat.find({},function(err,res){
+        chat.find({}).toArray(function(err,res){
 			if (err) {
                 throw err;
             }
 
             // Emit the messages
             socket.emit('output', res);
-			
+
 		});
 
 
@@ -322,5 +322,3 @@ function onConnection(socket) {
 
 
 }
-
-
