@@ -1,7 +1,3 @@
-// added in initial build
-const mongo = require('mongodb').MongoClient;  // https://github.com/mongodb/node-mongodb-native
-
-
 // added in express build
 const express = require('express');
 const app = express();
@@ -20,9 +16,13 @@ const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 
-
 // connect to database with mongoose
-mongoose.connect('mongodb://localhost/seng513db');
+mongoose.connect('mongodb://localhost/seng513db', function (err, db) {
+        if (err) {
+            throw err;
+        }
+        console.log('Mongodb Chat connected...');
+    });
 const db = mongoose.connection;
 
 // Start the server
@@ -42,14 +42,6 @@ app.set('view engine', 'handlebars');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-// Connect Chat to mongo
-// mongo.connect('mongodb://127.0.0.1/mydb', function (err, db) {
-//     if (err) {
-//         throw err;
-//     }
-//     console.log('Mongodb Chat connected...');
-// });
 
 // Serve the Client
 app.use(express.static(path.join(__dirname, '/public')));
@@ -97,13 +89,6 @@ app.use(function (req, res, next) {
 
 app.use('/', routes);
 app.use('/users', users); // change to be single page later
-
-// // Set Port & start app server (Dont use app, use server already defined above)
-// app.set('port', (process.env.PORT || 3000));
-// app.listen(app.get('port'), function(){
-//     console.log('Server started on port '+app.get('port'));
-// });
-
 
 // canvas' logic
 const Jimp = require('jimp');
@@ -205,8 +190,6 @@ function onConnection(socket) {
 
 		});
 		socket.emit('canvasFromServer',listOfHistory);
-
-
 	});
 
     socket.on('subscribe', function (data) {
@@ -214,7 +197,6 @@ function onConnection(socket) {
         var index = rooms.findIndex(room => room.id === roomName);
         socket.join(roomName);
         console.log(socket.id + ' joined room: ' + data);
-        //chatSubscribe(roomName, socket);
 
         let chat = db.collection(roomName);
         console.log("Chat connected to room: " + roomName);
@@ -247,17 +229,9 @@ function onConnection(socket) {
             io.sockets.in(roomName).emit('clearCanvas', data.canvas);
         });
 
-
-
         sendStatus = function (s) {
             socket.emit('status', s);
         }
-
-        // Get chats from mongo collection
-        // chat.find().limit(100).sort({ _id: 1 }).toArray(function (err, res) {
-        //     if (err) {
-        //         throw err;
-        //     }
 
         chat.find({}).toArray(function(err,res){
 			if (err) {
@@ -268,8 +242,6 @@ function onConnection(socket) {
             socket.emit('output', res);
 
 		});
-
-
 
         // CHAT SOCKET EVENTS
         // Handle input events
@@ -296,22 +268,13 @@ function onConnection(socket) {
             }
         });
 
-        // Handle clear
-        socket.on('clear', function (data) {
-            // Remove all chats from collection
-            chat.remove({}, function () {
-                // Emit cleared
-                socket.emit('cleared');
-            });
-        });
-
-
-
-
-
-
-
+        // // Handle clear
+        // socket.on('clear', function (data) {
+        //     // Remove all chats from collection
+        //     chat.remove({}, function () {
+        //         // Emit cleared
+        //         socket.emit('cleared');
+        //     });
+        // });
     });
-
-
 }
