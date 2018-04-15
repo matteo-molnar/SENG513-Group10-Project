@@ -67,16 +67,29 @@ socket.on('roomData', function(data) {
 	}
 	rooms_count = roomsArray.length;
 });
-//not used?
-function gotoroom(room){
-	let room_str = room;
-	$('#btn4').on('click', function(){
-		$("#includedContent").load("/rooms/canvases/canvas.html");
-		setIntent($('#btn4').text());
-	})
+
+function previewFile() {
+    var preview = document.querySelector('img');
+    var file    = document.querySelector('input[type=file]').files[0];
+    var reader  = new FileReader();
+
+    reader.addEventListener("load", function () {
+        preview.src = reader.result;
+    }, false);
+
+    if (file) {
+        reader.readAsDataURL(file);
+        console.log(reader);
+    }
 }
+
 $('#btn-add').on('click', function(){
     let room_name = prompt("Please enter name of canvas room", "ex. The Matrix");
+    if(room_name===null){
+    	return;
+	}
+	//readFile();
+
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
 	let element = $('<li>');
