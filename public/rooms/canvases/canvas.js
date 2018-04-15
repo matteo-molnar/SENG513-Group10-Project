@@ -120,6 +120,7 @@ debug = false;
 	});
 
 	$('#dlBtn').on('click',function(e){
+        let roomName = $("#roomname").text;
 		let data = context.getImageData(0, 0, canvas.width, canvas.height);
 		let compositeOperation = context.globalCompositeOperation;
 		context.globalCompositeOperation = "destination-over";
