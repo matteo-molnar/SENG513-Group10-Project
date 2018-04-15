@@ -14,7 +14,8 @@
 <div class="container" style="display: flex; justify-content: center;">
 	<form>
 	<ol id='rooms-buttons-list'>
-		<li id='btn-add-li'><button id = 'btn-add' type="button" class="btn btn-light">Add/Create Canvas</button>
+		<!-- <li id='btn-add-li'><button id = 'btn-add' type="button" class="btn btn-light">Add/Create Canvas</button> -->
+		<li id='btn-add-li' style="visibility: hidden;">
 	</ol>
 	</form>
 </div>
@@ -34,7 +35,7 @@
 				<input type="file" class="form-control" name="imageuploadinput">
 			</div>
 			<div class="modal-footer">
-				<button id="createRoomBtn" type="button" class="btn btn-default">Create</button>
+				<button id="createRoomBtn" type="button" class="btn btn-default" data-dismiss="modal">Create</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>

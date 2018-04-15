@@ -77,7 +77,7 @@ function gotoroom(room){
 	})
 }
 
-$('#btn-add').on('click', function(){
+/*$('#btn-add').on('click', function(){
     let room_name = prompt("Please enter name of canvas room", "ex. The Matrix");
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
@@ -130,7 +130,7 @@ $('#btn-add').on('click', function(){
 		'name': room_name,
 		'path': 'stock_apple.png'
 	})
-})
+})*/
 
 $('#createRoomBtn').on('click', function(){
     let room_name = document.getElementById('roomNameInput').value;
