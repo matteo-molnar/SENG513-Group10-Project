@@ -3,7 +3,11 @@ let router = express.Router();
 
 // Get Index View
 router.get('/', function(req, res){
-    res.render('index');
+    if (req.user) {
+        res.render('index', {username: req.user.username});
+    } else {
+        res.render('index', {username: null});
+    }
 });
 
 module.exports = router;

@@ -2,7 +2,7 @@
   // connect to server socket
   //let socket = io();
 
-  
+
 
   var element = function (id) {
     return document.getElementById(id);
@@ -14,6 +14,12 @@
   var textarea = element('textarea');
   var username = element('username');
   var clearBtn = element('clear');
+
+  //Set the user if there is one logged in
+  if (user) {
+      username.value = user;
+      username.setAttribute("readonly", "readonly");
+  }
 
   // Set default status
   var statusDefault = status.textContent;
