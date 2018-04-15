@@ -14,6 +14,7 @@ debug = false;
     // var socket = io();
     var canvas = document.getElementsByClassName('whiteboard')[0];
     var colors = document.getElementsByClassName('color');
+    var thicknesses = document.getElementsByClassName('thicknessWrapper');
     var context = canvas.getContext('2d');
     canvas.width = 720;
     canvas.height = 480;
@@ -41,39 +42,64 @@ debug = false;
 
 
     var current = {
-        color: 'black'
+        color: 'black',
+        thickness: 2
     };
 
 
     var drawing = false;
-    
-    
+
+
 	var mode="pen";
 
 
     canvas.addEventListener('mousedown', onMouseDown, false);
     canvas.addEventListener('mouseup', onMouseUp, false);
     canvas.addEventListener('mouseout', onMouseUp, false);
-    canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+    canvas.addEventListener('mousemove', throttle(onMouseMove, 1), false);
 	canvas.addEventListener('touchstart', onTouch, false);
 	canvas.addEventListener('touchmove', onTouchMove, false);
 	canvas.addEventListener('touchend', onTouchLift, false);
 
+    //Pallette setup
+
+    //true => extended; false => collapsed
+    let palletteStatus = true;
+
+    function togglePallette() {
+        if (palletteStatus) {
+            $('#sidebar').animate({
+                left: -180,
+            });
+            palletteStatus = false;
+            $('#toggleText').text("Show Pallette");
+        } else if (!palletteStatus) {
+            $('#sidebar').animate({
+                left: 0,
+            });
+            palletteStatus = true;
+            $('#toggleText').text("Hide Pallette");
+        }
+    };
+
+    $('#toggleSidebar').click(togglePallette);
 
     for (var i = 0; i < colors.length; i++){
         colors[i].addEventListener('click', onColorUpdate, false);
     }
-    
-    $("#penBtn").click(function(){
-		mode="pen";
-		$(this).prop("disabled", true);
-		$("#eraBtn").prop("disabled", false);
-		});
-	$("#eraBtn").click(function(){
-		mode="eraser";
-		$(this).prop("disabled", true);
-		$("#penBtn").prop("disabled", false);
-		});
+    for (var i = 0; i<thicknesses.length; i++){
+        thicknesses[i].addEventListener('click', onThicknessUpdate, false);
+    }
+    $(".pencil").click(function(){
+        mode="pen";
+        $(this).css("border", "1px solid black");
+        $(".eraser").css("border", "1px solid grey");
+    });
+    $(".eraser").click(function(){
+        mode="eraser";
+        $(this).css("border", "1px solid black");
+        $(".pencil").css("border", "1px solid grey");
+    });
 
     socket.on('drawing', onDrawingEvent);
     socket.on('history', swapCanvas);
@@ -108,26 +134,24 @@ debug = false;
 		context.globalCompositeOperation = compositeOperation;
 
 
-		console.log('hi');
-
 	});
 
     window.addEventListener('resize', updateOffset, false);
 
     //Modified to draw points from top left of canvas instead of page
-    function drawLine(x0, y0, x1, y1, color, emit){
+    function drawLine(x0, y0, x1, y1, thickness, color, emit){
 		context.beginPath();
 		if(emit){
 			x0 += $("#canvasContainer").scrollLeft();
 			x1 += $("#canvasContainer").scrollLeft();
 		}
-		
+
 		if(mode=="pen"){
 			context.globalCompositeOperation="source-over";
 			context.moveTo(x0 , y0);
 			context.lineTo(x1 , y1);
 			context.strokeStyle = color;
-			context.lineWidth = 2;
+			context.lineWidth = thickness;
 			context.stroke();
 		}else{
 			context.globalCompositeOperation="destination-out";
@@ -138,13 +162,14 @@ debug = false;
         if (!emit) { return; }
         var w = canvas.width;
         var h = canvas.height;
-		
+
         let canvasData = canvas.toDataURL();
         socket.emit('drawing', {
 			x0: x0 / w,
 			y0: y0 / h,
 			x1: x1 / w,
 			y1: y1 / h,
+            thickness: thickness,
 			color: color,
 			mode: mode
         });
@@ -169,7 +194,7 @@ debug = false;
 			let newY = event.targetTouches[0].pageY - offset.top;
 			//console.log("touchCOORD" + newX + ", " + newY);
 
-			drawLine(current.x,current.y,newX,newY,current.color,true);
+			drawLine(current.x,current.y,newX,newY,current.thickness,current.color,true);
 			current.x = newX;
 			current.y = newY;
 		}
@@ -183,7 +208,7 @@ debug = false;
 			let newX = event.changedTouches[0].pageX - offset.left;
 			let newY = event.changedTouches[0].pageY - offset.top;
 			console.log("LIFT" + newX + ",  " +newY)
-			drawLine(current.x,current.y,newX,newY,current.color,true);
+			drawLine(current.x,current.y,newX,newY,current.thickness,current.color,true);
 			current.x = newX;
 			current.y = newY;
 		}else if (event.touches.length == 1){
@@ -204,18 +229,31 @@ debug = false;
     function onMouseUp(e){
         if (!drawing) { return; }
         drawing = false;
-        drawLine(current.x, current.y, divPos.left, divPos.top, current.color, true);
+        drawLine(current.x, current.y, divPos.left, divPos.top, current.thickness, current.color, true);
     }
 
     function onMouseMove(e){
         if (!drawing) { return; }
-        drawLine(current.x, current.y, divPos.left, divPos.top, current.color, true);
+        drawLine(current.x, current.y, divPos.left, divPos.top, current.thickness, current.color, true);
         current.x = divPos.left;
         current.y = divPos.top;
     }
 
     function onColorUpdate(e){
-        current.color = e.target.className.split(' ')[1];
+        $("."+current.color).css("border", "none");
+        let color = e.target.className.split(' ')[1];
+        current.color = color;
+        $("."+color).css("border", "1px solid black");
+        mode="pen";
+    }
+
+    function onThicknessUpdate(e){
+        $(".t-"+current.thickness).css("border", "1px solid grey");
+        let thickness = e.target.className.split('-')[1];
+        current.thickness = thickness;
+        $(".t-"+thickness).css("border", "1px solid black");
+        console.log(current.thickness);
+        mode="pen";
     }
 
     // limit the number of events per second
@@ -239,7 +277,8 @@ debug = false;
         if(data.mode != mode){
 			mode=data.mode;
 		}
-        drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+        console.log(data.thickness);
+        drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.thickness, data.color);
         mode=savedMode;
     }
 

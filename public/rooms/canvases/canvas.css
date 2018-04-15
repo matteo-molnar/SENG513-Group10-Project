@@ -34,7 +34,7 @@ html, body {
 
 
 #listOfCanvas {
-	
+
 	display:flex;
 	justify-content: space-evenly;
 	flex-wrap: wrap;
@@ -42,18 +42,102 @@ html, body {
 
 .multiView{
 	margin : 20px;
-	
+
+}
+
+#wrapper{
+    position: relative;
+    overflow:hidden;
+    max-height: 484px;
 }
 
 
-.colors {
-  position: fixed;
+#sidebar {
+    background: darkgrey;
+    border: 2px solid grey;
+    position: absolute;
+    left: 0px;
+    width: 200px;
+    height: 484px;
+    max-height: 484px;
+}
+
+#sidebar-content {
+    width: 80%;
+    float: left;
+}
+
+#toggleSidebar {
+    float: right;
+    height: 100%;
+    width: 20px;
+}
+
+#toggleSidebar:hover {
+    cursor: pointer;
+}
+
+#toggleText {
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform:rotate(90deg);
+    transform: rotate(90deg);
+    white-space:nowrap;
+}
+
+.tool {
+    display: inline-block;
+    border-radius: 3px;
+    border: 1px solid grey;
+    width: 75px;
+    height: 100px;
+    text-align: center;
+}
+
+.tool:hover {
+    border: 1px solid black;
+}
+
+.preview{
+    border-radius: 50%;
+    background-color: black;
+    margin: auto;
+}
+
+.thicknessWrapper {
+    padding: 0 3px;
+    height: 52px;
+    display: inline-block;
+    border: 1px solid grey;
+    border-radius: 3px;
+    margin-left: 2px;
+}
+
+.thicknessWrapper:hover{
+    cursor: pointer;
+    border: 1px solid black;
 }
 
 .color {
   display: inline-block;
   height: 48px;
   width: 48px;
+  border-radius: 3px;
+}
+
+.color:hover {
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+#clrBtn {
+    display: inline-block;
+}
+
+#dlBtn {
+    margin-top: 5px;
+    display: inline-block;
 }
 
 .color.black { background-color: black; }
@@ -61,3 +145,10 @@ html, body {
 .color.green { background-color: green; }
 .color.blue { background-color: blue; }
 .color.yellow { background-color: yellow; }
+.color.white { background-color: white; }
+
+.preview.preview-2 { width: 2px; height: 2px; margin-top: 24px; }
+.preview.preview-5 { width: 5px; height: 5px; margin-top: 23px; }
+.preview.preview-10 { width: 10px; height: 10px; margin-top: 20px; }
+.preview.preview-20 { width: 20px; height: 20px; margin-top: 15px; }
+.preview.preview-50 { width: 50px; height: 50px; }

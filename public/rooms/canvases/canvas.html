@@ -14,17 +14,37 @@
     <div>
 
         <div class="row">
-            <div id="canvasContainer">
-                <div class="colors">
-                    <ul class="color black"></ul>
-                    <ul class="color red"></ul>
-                    <ul class="color green"></ul>
-                    <ul class="color blue"></ul>
-                    <ul class="color yellow"></ul>
-                    <button id="penBtn">Pen</button>
-                    <button id="eraBtn">Eraser</button>
+            <div id="wrapper">
+                <div id="sidebar">
+                    <div id="sidebar-content" class="colors">
+                        <div id="accordionParent" class="accordion">
+                            <div> Tools </div>
+                            <div class="tool pencil"><img src="http://downloadicons.net/sites/default/files/pencil-icon-96109.png" alt="Pencil icon" height="64" width="64">Pencil</div>
+                            <div class="tool eraser"><img src="http://downloadicons.net/sites/default/files/eraser-icon-27536.png" alt="Eraser icon" height="64" width="64">Eraser</div>
+                            <div> Doodle Color </div>
+                            <div class="color black"></div>
+                            <div class="color white"></div>
+                            <div class="color red"></div>
+                            <div class="color green"></div>
+                            <div class="color blue"></div>
+                            <div class="color yellow"></div>
+                            <div> Doodle Thickness </div>
+                            <div class="thicknessWrapper t-2"><div class="preview preview-2"></div></div>
+                            <div class="thicknessWrapper t-5"><div class="preview preview-5"></div></div>
+                            <div class="thicknessWrapper t-10"><div class="preview preview-10"></div></div>
+                            <div class="thicknessWrapper t-20"><div class="preview preview-20"></div></div>
+                            <div class="thicknessWrapper t-50"><div class="preview preview-50"></div></div>
+                            <div> Functions </div>
+                            <button id = 'clrBtn' type="button" class="btn btn-primary">Clear</button>
+                            <button id = 'dlBtn' type="button" class="btn btn-primary">Download</button>
+
+                        </div>
+                    </div>
+                    <div id="toggleSidebar"><div id="toggleText">Hide Pallette</div></div>
                 </div>
-                <canvas class="whiteboard" ></canvas>
+                <div id="canvasContainer">
+                    <canvas class="whiteboard" ></canvas>
+                </div>
             </div>
             <div class="col float-right" id="chatContainer">
                 chatbox
@@ -33,8 +53,6 @@
     </div>
     <!-- <script src="/socket.io/socket.io.js"></script>
     <script src="/rooms/main.js"></script> -->
-	<button id = 'clrBtn' type="button" class="btn btn-primary">Clear</button> <a id = 'dlBtn' type="button" class="btn btn-primary">download</a>
-
     <script>
         joinRoom(io.intent);
         $('#roomname').text(io.intent);

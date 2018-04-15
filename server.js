@@ -129,7 +129,7 @@ function saveToFile(filePath, perpetuate) {
     fs.writeFile(filePath, json, 'utf8', function () {
         console.log('saved to file');
     })
-    if (perpetuate) setTimeout(saveToFile, 5000, 'public/rooms/rooms.json', true);
+    if (perpetuate) setTimeout(saveToFile, 15000, 'public/rooms/rooms.json', true);
 }
 
 // Resizes and generates a base64 encoding of an image
@@ -231,7 +231,7 @@ function onConnection(socket) {
 				ctx.moveTo(data.x0 * whiteboards[index].width, data.y0 * whiteboards[index].height);
 				ctx.lineTo(data.x1 * whiteboards[index].width, data.y1 * whiteboards[index].height);
 				ctx.strokeStyle = data.color;
-				ctx.lineWidth = 2;
+				ctx.lineWidth = data.thickness;
 				ctx.stroke();
 			}else{
 				ctx.globalCompositeOperation="destination-out";
