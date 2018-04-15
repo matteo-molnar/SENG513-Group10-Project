@@ -104,12 +104,19 @@ debug = false;
     //Modified to draw points from top left of canvas instead of page
     function drawLine(x0, y0, x1, y1, color, emit){
         context.beginPath();
-        context.moveTo(x0 + $("#canvasContainer").scrollLeft(), y0);
-        context.lineTo(x1 + $("#canvasContainer").scrollLeft(), y1);
-        context.strokeStyle = color;
-        context.lineWidth = 2;
-        context.stroke();
-        context.closePath();
+			if(emit){
+				context.moveTo(x0 + $("#canvasContainer").scrollLeft(), y0);
+				context.lineTo(x1 + $("#canvasContainer").scrollLeft(), y1);
+				
+			}else{
+				context.moveTo(x0 , y0);
+				context.lineTo(x1 , y1);
+			}
+			
+			context.strokeStyle = color;
+			context.lineWidth = 2;
+			context.stroke();
+			context.closePath();
 
         if (!emit) { return; }
         var w = canvas.width;
@@ -117,9 +124,9 @@ debug = false;
 
         let canvasData = canvas.toDataURL();
         socket.emit('drawing', {
-            x0: x0 / w,
+            x0: (x0 + $("#canvasContainer").scrollLeft())/ w,
             y0: y0 / h,
-            x1: x1 / w,
+            x1: (x1 + $("#canvasContainer").scrollLeft())/ w,
             y1: y1 / h,
             color: color
         });

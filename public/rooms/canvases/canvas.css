@@ -32,6 +32,20 @@ html, body {
   background : white;
 }
 
+
+#listOfCanvas {
+	
+	display:flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+}
+
+.multiView{
+	margin : 20px;
+	
+}
+
+
 .colors {
   position: fixed;
 }

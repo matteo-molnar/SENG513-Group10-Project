@@ -2,6 +2,7 @@
 
 let debug = false;
 var socket = io();
+var checkedList = [];
 
 function setIntent(roomName) {
     io.intent = roomName;

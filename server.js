@@ -190,6 +190,23 @@ function onConnection(socket) {
             });
         }
     });
+	
+	socket.on('getCanvas',function(listOfRooms){
+		let listOfHistory = [];
+		listOfRooms.forEach(function(roomName){
+			//console.log(listOfRooms);
+			let index = rooms.findIndex(room => room.id === roomName);
+			rooms[index].encoding = whiteboards[index].toDataURL();
+			listOfHistory.push({
+				name : roomName,
+				encoding : rooms[index].encoding
+			});
+
+		});
+		socket.emit('canvasFromServer',listOfHistory);
+		
+		
+	});
 
     socket.on('subscribe', function (data) {
         var roomName = data;
@@ -215,6 +232,10 @@ function onConnection(socket) {
             ctx.closePath();
             //emit to the rest of the room
             io.sockets.in(roomName).emit('drawing', data);
+			io.emit('multiDrawing', {
+				name: roomName,
+				canvasData: data
+			});
         });
         socket.on('clrCanvas', function (data) {
             //clear the virtual canvas
@@ -236,14 +257,15 @@ function onConnection(socket) {
         //         throw err;
         //     }
 
-        chat.find({}).toArray(function (err, res) {
-            if (err) {
+        chat.find({},function(err,res){
+			if (err) {
                 throw err;
             }
 
             // Emit the messages
             socket.emit('output', res);
-        });
+			
+		});
 
 
 

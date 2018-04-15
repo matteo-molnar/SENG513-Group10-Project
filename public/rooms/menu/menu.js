@@ -1,6 +1,23 @@
 let roomsArray;
 let rooms_count = 0;
 let canvas_room_str = "Canvas Room ";
+
+$("#view-btn").on("click",function(){
+	var listItems = $(":checkbox");
+	listItems.each(function(index){
+		if($(this).is(':checked')){
+			let name = $(this).attr('id');
+			console.log(name);	
+
+			let parsedName = name.substring(3);
+			checkedList.push(parsedName);
+		}
+		
+	});
+	
+	$("#includedContent").load("/rooms/multiView/multiView.html");
+
+});
 socket.on('roomData', function(data) {
 	roomsArray = data;
 	//rooms_count = roomsArray.length;
@@ -13,9 +30,10 @@ socket.on('roomData', function(data) {
 		let myButton = document.createElement('button');
 		//rooms_count = i + 1;
 
-        let checkbox_id = 'checkbox' + i;
 		let button_id = 'btn' + i;
 		let button_txt = roomsArray[i-1].id;
+		let checkbox_id = 'chk'+ button_txt;
+
 		console.log(button_txt);
 		let button_class = '';
 		if(i%5===0){
@@ -34,7 +52,7 @@ socket.on('roomData', function(data) {
 			button_class = "\"btn btn-danger\"";
 		}
 		//console.log(button_class);
-		checkbox = "<input type=\"checkbox\" id=" + checkbox_id +  ">";
+		checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\">";
 		myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
 		element.append(checkbox);
 		element.append(myButton);
@@ -45,14 +63,7 @@ socket.on('roomData', function(data) {
 			setIntent($('#'+button_id).text());
 		})
 
-		//add event listener for checkbox
-        document.getElementById(checkbox_id).addEventListener( 'change', function() {
-            if(this.checked) {
-                console.log(checkbox_id + ' is checked');
-            } else {
-                // Checkbox is not checked..
-            }
-        });
+		
 	}
 	rooms_count = roomsArray.length;
 });
@@ -73,9 +84,10 @@ $('#btn-add').on('click', function(){
 	let element_add = $('#btn-add-li');
 
 	let myButton = document.createElement('button');
-    let checkbox_id = 'checkbox' + rooms_count;
 	let button_id = 'btn' + rooms_count;
 	let button_txt = room_name;
+	let checkbox_id = 'chk' + button_txt;
+
 	let button_class = '';
 	if(rooms_count%5===0){
 		button_class = "\"btn btn-secondary\"";
