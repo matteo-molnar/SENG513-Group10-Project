@@ -25,6 +25,8 @@ socket.on('roomData', function(data) {
 	var i;
 	for(i = rooms_count + 1; i <= roomsArray.length; i++){
 		let element = $('<li>');
+		let channelElement = document.createElement('div');
+		channelElement.classList.add('checkRect');
 		let checkbox = document.createElement('input');
 		let element_add = $('#btn-add-li');
 		let myButton = document.createElement('button');
@@ -35,27 +37,20 @@ socket.on('roomData', function(data) {
 		let checkbox_id = 'chk'+ button_txt;
 
 		console.log(button_txt);
-		let button_class = '';
-		if(i%5===0){
-			button_class = "\"btn btn-secondary\"";
-		}
-		else if(i%5===1){
-			button_class = "\"btn btn-primary\"";
-		}
-		else if(i%5===2){
-			button_class = "\"btn btn-success\"";
-		}
-		else if(i%5===3){
-			button_class = "\"btn btn-warning\"";
-		}
-		else{
-			button_class = "\"btn btn-danger\"";
-		}
+		
 		//console.log(button_class);
-		checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\">";
-		myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
-		element.append(checkbox);
-		element.append(myButton);
+		checkbox.type="checkbox";
+		checkbox.id=checkbox_id;
+		checkbox.classList.add("checkmark");
+		//checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\" class=\"checkmark\">";
+		channelElement.appendChild(checkbox);
+		myButton.id = button_id;
+		myButton.type="button";
+		myButton.classList.add("channelButton");
+		myButton.innerHTML = button_txt;
+		//myButton = "<button id =" + button_id + " type=\"button\" class=\"channelButton\">" + button_txt + "</button>";
+		channelElement.appendChild(myButton);
+		element.append(channelElement);
 		element.insertBefore(element_add);
 		//add event listener for button
 		document.getElementById(button_id).addEventListener('click', function(){
@@ -89,7 +84,9 @@ $('#createRoomBtn').on('click', function(){
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
 	let element = $('<li>');
-    let checkbox = document.createElement('input');
+    let channelElement = document.createElement('div');
+	channelElement.classList.add('checkRect');
+	let checkbox = document.createElement('input');
 	let element_add = $('#btn-add-li');
 
 	let myButton = document.createElement('button');
@@ -97,41 +94,30 @@ $('#createRoomBtn').on('click', function(){
 	let button_txt = room_name;
 	let checkbox_id = 'chk' + button_txt;
 
-	let button_class = '';
-	if(rooms_count%5===0){
-		button_class = "\"btn btn-secondary\"";
-	}
-	else if(rooms_count%5===1){
-		button_class = "\"btn btn-primary\"";
-	}
-	else if(rooms_count%5===2){
-		button_class = "\"btn btn-success\"";
-	}
-	else if(rooms_count%5===3){
-		button_class = "\"btn btn-warning\"";
-	}
-	else{
-		button_class = "\"btn btn-danger\"";
-	}
+	
 
-    checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\">";
-	myButton = "<button id =" + button_id + " type=\"button\" class="+ button_class +">" + button_txt + "</button>";
-    element.append(checkbox);
-	element.append(myButton);
+
+	
+	
+    checkbox.type="checkbox";
+	checkbox.id=checkbox_id;
+	checkbox.classList.add("checkmark");
+	//checkbox = "<input type=\"checkbox\" id=\"" + checkbox_id +  "\" class=\"checkmark\">";
+	channelElement.appendChild(checkbox);
+	myButton.id = button_id;
+	myButton.type="button";
+	myButton.classList.add("channelButton");
+	myButton.innerHTML = button_txt;
+	//myButton = "<button id =" + button_id + " type=\"button\" class=\"channelButton\">" + button_txt + "</button>";
+	channelElement.appendChild(myButton);
+	element.append(channelElement);
 	element.insertBefore(element_add);
+	//add event listener for button
 	document.getElementById(button_id).addEventListener('click', function(){
 		$("#includedContent").load("/rooms/canvases/canvas.html");
 		setIntent($('#'+button_id).text());
 	})
-
-    //add event listener for checkbox
-    document.getElementById(checkbox_id).addEventListener( 'change', function() {
-        if(this.checked) {
-            console.log(checkbox_id + ' is checked');
-        } else {
-            // Checkbox is not checked..
-        }
-    });
+   
 
 	socket.emit('makeRoom', {
 		'name': room_name,
