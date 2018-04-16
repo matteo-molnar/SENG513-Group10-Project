@@ -48,7 +48,6 @@ html, body {
 #wrapper{
     position: relative;
     overflow:hidden;
-    max-height: 484px;
 }
 
 
