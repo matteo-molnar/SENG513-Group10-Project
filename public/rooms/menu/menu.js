@@ -100,6 +100,9 @@ function getBase64(file) {
 }
 
 $('#createRoomBtn').on('click', function(){
+	if (document.getElementById('roomNameInput').value == "" || document.getElementById('roomNameInput').value == null)
+		return;
+		
     let room_name = document.getElementById('roomNameInput').value;
 	rooms_count++;//increment rooms count
 	console.log(canvas_room_str + rooms_count);
