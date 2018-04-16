@@ -51,6 +51,7 @@ html, body {
 }
 
 
+
 #sidebar {
     background: darkgrey;
     border: 2px solid grey;
@@ -118,6 +119,7 @@ html, body {
 .thicknessWrapper:hover{
     cursor: pointer;
     border: 1px solid black;
+
 }
 
 .color {
