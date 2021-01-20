@@ -36,6 +36,6 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "popper.js": "^1.14.1",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.4.0"
   }
 }
